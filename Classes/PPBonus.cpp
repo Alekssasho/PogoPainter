@@ -35,20 +35,20 @@ void PPArrow::apply(PPPlayer& player, PPBoard& board)
     switch (dir)
     {
     case Left:
-        for (int c = player.x; c >= 0; --c)
-            board.at(c, player.y).color = player.color;
+        for (int c = player.getPosition().x; c >= 0; --c)
+            board.at(c, player.getPosition().y).color = player.color;
         break;
     case Up:
-        for (int c = player.y; c < PPBoardSize; ++c)
-            board.at(player.x, c).color = player.color;
+        for (int c = player.getPosition().y; c < PPBoardSize; ++c)
+            board.at(player.getPosition().x, c).color = player.color;
         break;
     case Right:
-        for (int c = player.x; c < PPBoardSize; ++c)
-            board.at(c, player.y).color = player.color;
+        for (int c = player.getPosition().x; c < PPBoardSize; ++c)
+            board.at(c, player.getPosition().y).color = player.color;
         break;
     case Down:
-        for (int c = player.y; c >= 0; --c)
-            board.at(player.x, c).color = player.color;
+        for (int c = player.getPosition().y; c >= 0; --c)
+            board.at(player.getPosition().x, c).color = player.color;
         break;
     default:
         break;
@@ -61,6 +61,7 @@ void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer
     if (step++ < steps_delay) {
         return;
     }
+    step = 0;
 
     auto get_pos = [this]() {
         return Vec2(position_picker(generator), position_picker(generator));
@@ -73,6 +74,21 @@ void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer
         }
         return hit;
     };
+
+    if (target_checkpoints > checkpoints.size()) {
+        auto pos = get_pos();
+        while (board.at(pos).bonus || check_player(pos)) {
+            pos = get_pos();
+        }
+        checkpoints.push_back(new PPCheckpoint(board.at(pos)));
+        board.at(pos).bonus = std::unique_ptr<PPBonus>(checkpoints.back());
+        if (surface) {
+            checkpoints.back()->sprite->setPosition(checkpoints.back()->getCell().sprite->getPosition());
+            checkpoints.back()->sprite->setScale(checkpoints.back()->getCell().sprite->getScale());
+            surface->addChild(checkpoints.back()->sprite);
+        }
+        return;
+    }
 
     if (max_bonuses > bonuses.size()) {
         auto pos = get_pos();
@@ -99,20 +115,6 @@ void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer
             bonus->sprite->setPosition(bonus->getCell().sprite->getPosition());
             bonus->sprite->setScale(bonus->getCell().sprite->getScale());
             surface->addChild(bonus->sprite);
-        }
-    }
-    
-    if (target_checkpoints > checkpoints.size()) {
-        auto pos = get_pos();
-        while (board.at(pos).bonus || check_player(pos)) {
-            pos = get_pos();
-        }
-        checkpoints.push_back(new PPCheckpoint(board.at(pos)));
-        board.at(pos).bonus = std::unique_ptr<PPBonus>(checkpoints.back());
-        if (surface) {
-            checkpoints.back()->sprite->setPosition(checkpoints.back()->getCell().sprite->getPosition());
-            checkpoints.back()->sprite->setScale(checkpoints.back()->getCell().sprite->getScale());
-            surface->addChild(checkpoints.back()->sprite);
         }
     }
 }

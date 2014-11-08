@@ -60,7 +60,7 @@ class PPArrow : public PPBonus
     PPDirection dir;
 public:
     PPArrow(PPCell& cell)
-        :PPBonus(cell)
+        :PPBonus(cell), dir(Right)
     {
         sprite = Sprite::create("Bonuses/bonus_arrow.png");
     }
@@ -78,7 +78,7 @@ class PPBonusManager
 
     const int max_bonuses = 3;
     const int target_checkpoints = 3;
-    const int steps_delay = 4;
+    const int steps_delay = 3;
 
     std::mt19937 generator;
     std::uniform_int_distribution<int> bonus_picker, position_picker;

@@ -12,6 +12,8 @@
 using namespace cocos2d;
 using namespace std;
 
+#define TICK_DELAY 0.5f
+
 class PogoPainter : public Layer
 {
 private:
