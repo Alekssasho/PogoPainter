@@ -12,12 +12,12 @@
 
 using namespace cocos2d;
 
-PPPlayer::PPPlayer(int x, int y, PPColor c, PogoPainter& scene)
-: x(x), y(y), color(c), board(scene.getBoard())
+PPPlayer::PPPlayer(int x, int y, PPColor c, PogoPainter& scene, Sprite* pS)
+: x(x), y(y), color(c), board(scene.getBoard()), pSprite(pS)
 {}
 
-PPHumanPlayer::PPHumanPlayer(int x, int y, PPColor c, PogoPainter& scene)
-: PPPlayer(x, y, c, scene)
+PPHumanPlayer::PPHumanPlayer(int x, int y, PPColor c, PogoPainter& scene, Sprite* pS)
+: PPPlayer(x, y, c, scene, pS)
 {
     auto eventListener = EventListenerTouchOneByOne::create();
     

@@ -63,7 +63,7 @@ bool PogoPainter::init()
             Sprite* pSprite = board.at(x, y).sprite;
             pSprite->setPosition(
                 offset +
-                Vec2(y * cellSize, x * cellSize) +
+                Vec2(x * cellSize, y * cellSize) +
                 Vec2(cellSize / 2, cellSize / 2)
             );
 
@@ -73,8 +73,15 @@ bool PogoPainter::init()
         }
     }
 
-    auto pHumanPlayer = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(0, 0, PPColor::Red, *this));
+    auto pSprite = Sprite::create("Player/player_red.png");
+    pSprite->setPosition(board.at(0, 0).sprite->getPosition());
+    pSprite->setScale(board.at(0, 0).sprite->getScale());
+    this->addChild(pSprite);
+    
+    auto pHumanPlayer = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(0, 0, PPColor::Red, *this, pSprite));
     pHumanPlayer->currentDirection = PPDirection::Up;
+    
+    board.at(0, 0).color = pHumanPlayer->color;
     players.push_back(move(pHumanPlayer));
 
     this->scheduleUpdate();
@@ -92,6 +99,8 @@ void PogoPainter::gameTick(float dt)
             pBonus->apply(*pl, board);
             board.at(pl->x, pl->y).bonus.reset();
         }
+        
+        board.at(pl->x, pl->y).color = pl->color;
     }
     
     for(auto& pl : players) {
