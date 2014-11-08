@@ -75,6 +75,7 @@
 		D6B0611B1803AB670077942B /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6B0611A1803AB670077942B /* CoreMotion.framework */; };
 		F500FF0E1A0E2CE30051EF51 /* PogoPainterMenuScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F500FF0C1A0E2CE30051EF51 /* PogoPainterMenuScene.cpp */; };
 		F5C4343D1A0EB71300EAED0A /* PogoPainterResultScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F5C4343B1A0EB71300EAED0A /* PogoPainterResultScene.cpp */; };
+		F5C434401A0EC6BE00EAED0A /* Sounds in Resources */ = {isa = PBXBuildFile; fileRef = F5C4343F1A0EC6BE00EAED0A /* Sounds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -179,6 +180,7 @@
 		F500FF0D1A0E2CE30051EF51 /* PogoPainterMenuScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PogoPainterMenuScene.h; sourceTree = "<group>"; };
 		F5C4343B1A0EB71300EAED0A /* PogoPainterResultScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PogoPainterResultScene.cpp; sourceTree = "<group>"; };
 		F5C4343C1A0EB71300EAED0A /* PogoPainterResultScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PogoPainterResultScene.h; sourceTree = "<group>"; };
+		F5C4343F1A0EC6BE00EAED0A /* Sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sounds; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,6 +295,7 @@
 		46880B7519C43A67006E1F66 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F5C4343F1A0EC6BE00EAED0A /* Sounds */,
 				2CB69F7D1A0D9ADC00E2B018 /* Bonuses */,
 				2CB69F7E1A0D9ADC00E2B018 /* Cell */,
 				2CB69F7F1A0D9ADC00E2B018 /* General */,
@@ -482,6 +485,7 @@
 				50EF629917ECD46A001EB2F8 /* Icon-100.png in Resources */,
 				5087E78317EB970100C73F5D /* Icon-152.png in Resources */,
 				46880B8119C43A67006E1F66 /* HelloWorld.png in Resources */,
+				F5C434401A0EC6BE00EAED0A /* Sounds in Resources */,
 				2CB69F811A0D9ADC00E2B018 /* Bonuses in Resources */,
 				46880B7D19C43A67006E1F66 /* CloseSelected.png in Resources */,
 				5087E77D17EB970100C73F5D /* Default-568h@2x.png in Resources */,
