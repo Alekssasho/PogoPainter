@@ -28,6 +28,17 @@ public:
     {
         currentDirection = dir;
     }
+    
+    PPCell& getNextDirectionCell()
+    {
+        switch (getDirection()) {
+            case Up: return board.at(pos.x, pos.y + 1);
+            case Down: return board.at(pos.x, pos.y - 1);
+            case Left: return board.at(pos.x - 1, pos.y);
+            case Right: return board.at(pos.x + 1, pos.y);
+            default: return board.at(pos.x, pos.y);
+        }
+    }
 
     Vec2 pos;
     int points;
@@ -46,6 +57,7 @@ class PPHumanPlayer : public PPPlayer
 public:
     PPHumanPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite);
     
+    PPCell& getNextDirectionCell();
     PPDirection getDirection() override;
 private:
 };

@@ -32,6 +32,7 @@ public:
     void gameTick(float dt);
     
     PPBoard& getBoard() { return board; }
+    vector<unique_ptr<PPPlayer>>& getPlayers() { return players; }
     
     void registerEventListener(EventListener* listener);
     

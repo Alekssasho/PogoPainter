@@ -2,6 +2,7 @@
 #include "PogoPainterMenuScene.h"
 #include "SimpleAudioEngine.h"  
 
+#include "PogoPainterResultScene.h"
 
 USING_NS_CC;
 
@@ -145,6 +146,14 @@ void PogoPainter::gameTick(float dt)
     
     for(auto& pl : players) {
         auto dir = pl->getDirection();
+    
+        for (auto& other : players) {
+            if (other != pl && &pl->getNextDirectionCell() == &board.at(other->pos)) {
+                dir = PPDirection::None;
+                break;
+            }
+        }
+        
         auto res = board.moveInDir(pl->getPosition(), dir);
         if (pl->getPosition() != res) {
             pl->pos = res;

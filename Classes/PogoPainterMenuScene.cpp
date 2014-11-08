@@ -22,7 +22,7 @@ Scene* PogoPainterMenu::createScene()
 
 bool PogoPainterMenu::init()
 {
-    if (!LayerColor::initWithColor(Color4B(255, 0, 0, 128))) {
+    if (!LayerColor::initWithColor(Color4B(0, 0, 0, 128))) {
         return false;
     }
     
