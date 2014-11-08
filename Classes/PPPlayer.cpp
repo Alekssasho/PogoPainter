@@ -25,10 +25,22 @@ PPHumanPlayer::PPHumanPlayer(int x, int y, PPColor c, PogoPainter& scene)
         return true;
     };
 
-    eventListener->onTouchEnded = [](Touch* touch, Event* event) {
+    eventListener->onTouchEnded = [this](Touch* touch, Event* event) {
         auto startTouch = touch->getStartLocation();
         auto diff = touch->getLocation() - startTouch;
-        CCLOG("%f : %f", diff.x, diff.y);
+        //TODO: check some minimal length for drag
+        if(diff.lengthSquared() <= 100*100)
+            return;
+        diff.normalize();
+
+        float angle = Vec2::angle(diff, Vec2(1, 0));
+        
+        if(angle <= M_PI_4)
+            this->currentDirection = PPDirection::Right;
+        else if(angle <= M_PI_2 + M_PI_4)
+            this->currentDirection = diff.y > 0 ? PPDirection::Up : PPDirection::Down;
+        else
+            this->currentDirection = PPDirection::Left;
     };
     
     scene.registerEventListener(eventListener);
