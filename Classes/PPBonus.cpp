@@ -1,62 +1,73 @@
-//
-//  PPBonus.cpp
-//  PogoPainter
-//
-//  Created by Aleksandar Angelov on 11/8/14.
-//
-//
+    //
+    //  PPBonus.cpp
+    //  PogoPainter
+    //
+    //  Created by Aleksandar Angelov on 11/8/14.
+    //
+    //
 
-#include "PPBonus.h"
-#include "PPPlayer.h"
+    #include "PPBonus.h"
+    #include "PPPlayer.h"
 
-void PPCheckpoint::apply(PPPlayer& player, PPBoard& board)
-{
-    board.each([&](PPCell & cell) {
-        if (cell.color == player.color) {
-            cell.color = PPColor::Empty;
-            ++player.points;
-            //TODO: Animate points
-        }
-    });
-}
+    void PPCheckpoint::apply(PPPlayer& player, PPBoard& board)
+    {
+        board.each([&](PPCell & cell) {
+            if (cell.color == player.color) {
+                Blink* blink = Blink::create(0.5f, 3);
+                cell.sprite->runAction(blink);
+                cell.color = PPColor::Empty;
+                ++player.points;
+                //TODO: Animate points
+            }
+        });
+    }
 
-void PPBonus::update(PPBoard& board)
-{
+    void PPBonus::update(PPBoard& board)
+    {
 
-}
+    }
 
-void PPArrow::update(PPBoard& board)
-{
+    void PPArrow::update(PPBoard& board)
+    {
     dir = (PPDirection)(((int)dir + 1) % 4);
-}
+    }
 
-void PPArrow::apply(PPPlayer& player, PPBoard& board)
-{
+    void PPArrow::apply(PPPlayer& player, PPBoard& board)
+    {
+        Blink* blink = Blink::create(1.0f, 5);
     switch (dir)
     {
     case Left:
-        for (int c = player.getPosition().x; c >= 0; --c)
+        for (int c = player.getPosition().x; c >= 0; --c){
+            board.at(c, player.getPosition().y).sprite->runAction(blink);
             board.at(c, player.getPosition().y).color = player.color;
+        }
         break;
     case Up:
-        for (int c = player.getPosition().y; c < PPBoardSize; ++c)
-            board.at(player.getPosition().x, c).color = player.color;
+        for (int c = player.getPosition().y; c < PPBoardSize; ++c) {
+            board.at(c, player.getPosition().y).sprite->runAction(blink);
+            board.at(c, player.getPosition().y).color = player.color;
+        }
         break;
     case Right:
-        for (int c = player.getPosition().x; c < PPBoardSize; ++c)
+        for (int c = player.getPosition().x; c < PPBoardSize; ++c) {
+            board.at(c, player.getPosition().y).sprite->runAction(blink);
             board.at(c, player.getPosition().y).color = player.color;
+        }
         break;
     case Down:
-        for (int c = player.getPosition().y; c >= 0; --c)
+        for (int c = player.getPosition().y; c >= 0; --c) {
+            board.at(player.getPosition().x, c).sprite->runAction(blink);
             board.at(player.getPosition().x, c).color = player.color;
+        }
         break;
     default:
         break;
     }
-}
+    }
 
-void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer>> & players)
-{
+    void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer>> & players)
+    {
     static int step = 0;
     if (step++ < steps_delay) {
         return;
@@ -119,10 +130,10 @@ void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer
             surface->addChild(bonus->sprite);
         }
     }
-}
+    }
 
-void PPBonusManager::each(std::function<void(PPBonus*)> fn)
-{
+    void PPBonusManager::each(std::function<void(PPBonus*)> fn)
+    {
     for (auto & point : checkpoints) {
         fn(point);
     }
@@ -130,10 +141,10 @@ void PPBonusManager::each(std::function<void(PPBonus*)> fn)
     for (auto bonus : bonuses) {
         fn(bonus);
     }
-}
+    }
 
-void PPBonusManager::removeBonus(PPBonus * bonus)
-{
+    void PPBonusManager::removeBonus(PPBonus * bonus)
+    {
     auto found = find(bonuses.begin(), bonuses.end(), bonus);
     if (found != bonuses.end()) {
         bonuses.erase(found);
@@ -143,4 +154,4 @@ void PPBonusManager::removeBonus(PPBonus * bonus)
             checkpoints.erase(found);
         }
     }
-}
+    }
