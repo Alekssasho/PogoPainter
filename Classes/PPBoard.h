@@ -10,6 +10,7 @@
 #define __PogoPainter__PPBoard__
 
 #include <array>
+#include <cocos2d.h>
 
 using namespace cocos2d;
 

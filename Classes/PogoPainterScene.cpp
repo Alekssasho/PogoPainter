@@ -69,14 +69,20 @@ bool PogoPainter::init()
     textures[PPColor::Green]  = Director::getInstance()->getTextureCache()->addImage("Cell/cell_green.png");
     textures[PPColor::Empty]  = Director::getInstance()->getTextureCache()->addImage("Cell/cell_empty.png");
     
-    Vec2 offset(10, 5);
+    Vec2 offset(4, 4);
     auto cellSize = (visibleSize.width - offset.x) / 8;
     
     for(int x = 0; x < 8; ++x) {
         for(int y = 0; y < 8; ++y) {
             board.at(x, y).sprite = Sprite::createWithTexture(textures[PPColor::Empty]);
             Sprite* pSprite = board.at(x, y).sprite;
-            pSprite->setPosition(Vec2(offset.x/2 + x * cellSize + cellSize/2,visibleSize.height - (offset.y + y * cellSize + cellSize/2)));
+            pSprite->setPosition(
+                offset +
+                Vec2(y * cellSize, x * cellSize) +
+                Vec2(cellSize / 2, cellSize / 2)
+            );
+
+            pSprite->setPosition(pSprite->getPosition() + Vec2(0, visibleSize.height - 8 * cellSize - 8));
             pSprite->setScale((cellSize - 4) / pSprite->getBoundingBox().size.width);
             
             this->addChild(pSprite);
