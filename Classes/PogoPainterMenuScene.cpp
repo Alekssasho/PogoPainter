@@ -29,7 +29,7 @@ bool PogoPainterMenu::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
     
-    auto startGameLabel = LabelTTF::create("Touch to start game...", "Marker Felt.ttf", 32);
+    auto startGameLabel = LabelTTF::create("Touch to start game...", "fonts/Marker Felt.ttf", 32);
     startGameLabel->setPosition(visibleSize.width / 2, visibleSize.height / 2);
     
     this->addChild(startGameLabel);

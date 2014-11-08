@@ -1,5 +1,7 @@
 #include "PogoPainterScene.h"
 #include "PogoPainterMenuScene.h"
+#include "SimpleAudioEngine.h"  
+
 
 USING_NS_CC;
 
@@ -104,6 +106,9 @@ bool PogoPainter::init()
 
     PPBonusManager::getInstance().surface = this;
 
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/checkpoint.wav");
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/arrow.wav");
+
     return true;
 }
 
@@ -116,10 +121,23 @@ void PogoPainter::gameTick(float dt)
     for(auto& pl : players) {
         auto& pBonus = board.at(pl->getPosition()).bonus;
         if(pBonus) {
-            pBonus->apply(*pl, board);
+			pBonus->apply(*pl, board);
+
+			if (pl->color == PPColor::Red) {
+				if (dynamic_cast<PPCheckpoint*>(&*pBonus)) {
+					CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(
+						"Sounds/checkpoint.wav");
+				}
+				else if (dynamic_cast<PPArrow*>(&*pBonus)) {
+					CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(
+						"Sounds/arrow.wav");
+				}
+			}
+
             this->removeChild(pBonus->sprite);
             PPBonusManager::getInstance().removeBonus(&*pBonus);
             board.at(pl->getPosition()).bonus.reset();
+
         }
         
         board.at(pl->getPosition()).color = pl->color;
