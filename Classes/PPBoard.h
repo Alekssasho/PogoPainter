@@ -42,6 +42,7 @@ class PPBoard
 public:
     Vec2 moveInDir(const Vec2& pos, PPDirection dir);
     PPCell& at(int x, int y) { return cells[x + y * PPBoardSize]; }
+    PPCell& at(const Vec2 & r) { return at(r.x, r.y);  }
     std::array<PPCell, PPBoardSize * PPBoardSize> cells;
 
     void each(std::function<void(PPCell &)> cb);

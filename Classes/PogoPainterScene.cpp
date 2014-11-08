@@ -57,7 +57,7 @@ bool PogoPainter::init()
     textures[PPColor::Green]  = Director::getInstance()->getTextureCache()->addImage("Cell/cell_green.png");
     textures[PPColor::Empty]  = Director::getInstance()->getTextureCache()->addImage("Cell/cell_empty.png");
     
-    Vec2 offset(4, 4);
+    Vec2 offset(4, 4 - 60);
     auto cellSize = (visibleSize.width - offset.x) / 8;
     
     for(int x = 0; x < 8; ++x) {
@@ -79,9 +79,9 @@ bool PogoPainter::init()
     auto pSprite = Sprite::create("Player/player_red.png");
     pSprite->setPosition(board.at(0, 0).sprite->getPosition());
     pSprite->setScale(board.at(0, 0).sprite->getScale());
-    this->addChild(pSprite);
+    this->addChild(pSprite, 2);
     
-    auto pHumanPlayer = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(0, 0, PPColor::Red, *this, pSprite));
+    auto pHumanPlayer = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(Vec2::ZERO, PPColor::Red, *this, pSprite));
     pHumanPlayer->currentDirection = PPDirection::Up;
     
     board.at(0, 0).color = pHumanPlayer->color;
@@ -89,44 +89,58 @@ bool PogoPainter::init()
 
     this->scheduleUpdate();
     
-    this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), 0.75f);
-    
+    this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), TICK_DELAY);
+
+    PPBonusManager::getInstance().surface = this;
+
     return true;
 }
 
 void PogoPainter::gameTick(float dt)
 {
+    static int ticks = 0;
+    ++ticks;
+
+    PPBonusManager::getInstance().update(board, players);
     for(auto& pl : players) {
-        auto& pBonus = board.at(pl->x, pl->y).bonus;
+        auto& pBonus = board.at(pl->getPosition()).bonus;
         if(pBonus) {
             pBonus->apply(*pl, board);
-            board.at(pl->x, pl->y).bonus.reset();
+            this->removeChild(pBonus->sprite);
+            PPBonusManager::getInstance().removeBonus(&*pBonus);
+            board.at(pl->getPosition()).bonus.reset();
         }
         
-        board.at(pl->x, pl->y).color = pl->color;
+        board.at(pl->getPosition()).color = pl->color;
     }
     
     for(auto& pl : players) {
         auto dir = pl->getDirection();
-        auto res = board.moveInDir(Vec2(pl->x, pl->y), dir);
-        if(Vec2(pl->x, pl->y) != res) {
-            pl->x = res.x, pl->y = res.y;
-            auto action = MoveTo::create(0.75f, board.at(pl->x, pl->y).sprite->getPosition());
+        auto res = board.moveInDir(Vec2(pl->getPosition()), dir);
+        if (Vec2(pl->getPosition()) != res) {
+            pl->getPosition() = res;
+            auto action = MoveTo::create(TICK_DELAY, board.at(pl->getPosition()).sprite->getPosition());
             pl->pSprite->runAction(action);
             
             pl->pSprite->scheduleOnce([this, &pl](float dt) {
-                this->board.at(pl->x, pl->y).color = pl->color;
-            }, 0.35f, "color");
+                this->board.at(pl->getPosition()).color = pl->color;
+            }, TICK_DELAY / 2, "color");
         } else {
             //TODO: feedback on wall hit
         }
     }
-    
-    for(auto& cell : board.cells) {
-        if(cell.bonus) {
-            cell.bonus->update(board);
-        }
+
+    if (ticks % 2) {
+        PPBonusManager::getInstance().each([&](PPBonus * bonus) {
+            bonus->update(board);
+            if (PPArrow * arrow = dynamic_cast<PPArrow*>(bonus)) {
+                bonus->sprite->runAction(
+                    RotateBy::create(TICK_DELAY / 2, 90)
+                    );
+            }
+        });
     }
+
     
     //TODO: handle bonus handler
 }

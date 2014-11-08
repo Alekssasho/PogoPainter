@@ -12,12 +12,12 @@
 
 using namespace cocos2d;
 
-PPPlayer::PPPlayer(int x, int y, PPColor c, PogoPainter& scene, Sprite* pS)
-: x(x), y(y), color(c), board(scene.getBoard()), pSprite(pS)
+PPPlayer::PPPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pS)
+: pos(pos), color(c), board(scene.getBoard()), pSprite(pS)
 {}
 
-PPHumanPlayer::PPHumanPlayer(int x, int y, PPColor c, PogoPainter& scene, Sprite* pS)
-: PPPlayer(x, y, c, scene, pS)
+PPHumanPlayer::PPHumanPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pS)
+: PPPlayer(pos, c, scene, pS)
 {
     auto eventListener = EventListenerTouchOneByOne::create();
     
@@ -29,7 +29,7 @@ PPHumanPlayer::PPHumanPlayer(int x, int y, PPColor c, PogoPainter& scene, Sprite
         auto startTouch = touch->getStartLocation();
         auto diff = touch->getLocation() - startTouch;
         //TODO: check some minimal length for drag
-        if(diff.lengthSquared() <= 100*100)
+        if(diff.lengthSquared() <= 50*50)
             return;
         diff.normalize();
 
@@ -49,4 +49,11 @@ PPHumanPlayer::PPHumanPlayer(int x, int y, PPColor c, PogoPainter& scene, Sprite
 PPDirection PPHumanPlayer::getDirection()
 {
     return currentDirection;
+}
+
+
+PPStupidAiPlayer::PPStupidAiPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite)
+    : PPPlayer(pos, c, scene, pSprite)
+{
+
 }

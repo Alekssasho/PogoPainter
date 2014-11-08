@@ -17,11 +17,14 @@ class PogoPainter;
 class PPPlayer
 {
 public:
-    PPPlayer(int cx, int cy, PPColor c, PogoPainter& scene, Sprite* pSprite);
+    PPPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite);
     
     virtual PPDirection getDirection() = 0;
-    
-    int x, y;
+    Vec2 & getPosition() {
+        return pos;
+    }
+
+    Vec2 pos;
     int points;
     PPColor color;
     Sprite* pSprite;
@@ -32,12 +35,18 @@ private:
 class PPHumanPlayer : public PPPlayer
 {
 public:
-    PPHumanPlayer(int x, int y, PPColor c, PogoPainter& scene, Sprite* pSprite);
+    PPHumanPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite);
     
     PPDirection getDirection() override;
     
     PPDirection currentDirection;
 private:
+};
+
+class PPStupidAiPlayer : public PPPlayer
+{
+public:
+    PPStupidAiPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite);
 };
 
 #endif /* defined(__PogoPainter__PPPlayer__) */
