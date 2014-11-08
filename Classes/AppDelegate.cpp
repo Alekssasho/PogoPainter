@@ -1,5 +1,6 @@
 #include "AppDelegate.h"
 #include "PogoPainterScene.h"
+#include "PogoPainterMenuScene.h"
 
 USING_NS_CC;
 
@@ -44,6 +45,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto scene = PogoPainter::createScene();
 
     // run
+    
+    director->pushScene(scene);
     director->runWithScene(scene);
 
     return true;

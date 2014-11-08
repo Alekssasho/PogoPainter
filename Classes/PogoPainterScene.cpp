@@ -1,4 +1,5 @@
 #include "PogoPainterScene.h"
+#include "PogoPainterMenuScene.h"
 
 USING_NS_CC;
 
@@ -9,9 +10,11 @@ Scene* PogoPainter::createScene()
     
     // 'layer' is an autorelease object
     auto layer = PogoPainter::create();
+    auto menu = PogoPainterMenu::create();
 
     // add layer as a child to scene
     scene->addChild(layer);
+    scene->addChild(menu);
 
     // return the scene
     return scene;

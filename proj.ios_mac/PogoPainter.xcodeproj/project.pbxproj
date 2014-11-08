@@ -73,6 +73,7 @@
 		D44C620E132DFF430009C878 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44C620D132DFF430009C878 /* AVFoundation.framework */; };
 		D44C6210132DFF4E0009C878 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D44C620F132DFF4E0009C878 /* AudioToolbox.framework */; };
 		D6B0611B1803AB670077942B /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D6B0611A1803AB670077942B /* CoreMotion.framework */; };
+		F500FF0E1A0E2CE30051EF51 /* PogoPainterMenuScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F500FF0C1A0E2CE30051EF51 /* PogoPainterMenuScene.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -173,6 +174,8 @@
 		D44C620D132DFF430009C878 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		D44C620F132DFF4E0009C878 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		D6B0611A1803AB670077942B /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk/System/Library/Frameworks/CoreMotion.framework; sourceTree = DEVELOPER_DIR; };
+		F500FF0C1A0E2CE30051EF51 /* PogoPainterMenuScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PogoPainterMenuScene.cpp; sourceTree = "<group>"; };
+		F500FF0D1A0E2CE30051EF51 /* PogoPainterMenuScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PogoPainterMenuScene.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -314,6 +317,8 @@
 				2CB69F7B1A0D918700E2B018 /* PPBonus.h */,
 				2CB69F851A0DCF5500E2B018 /* PPPlayer.cpp */,
 				2CB69F861A0DCF5500E2B018 /* PPPlayer.h */,
+				F500FF0C1A0E2CE30051EF51 /* PogoPainterMenuScene.cpp */,
+				F500FF0D1A0E2CE30051EF51 /* PogoPainterMenuScene.h */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -524,6 +529,7 @@
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
 				2CB69F791A0D8E1C00E2B018 /* PPBoard.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
+				F500FF0E1A0E2CE30051EF51 /* PogoPainterMenuScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
