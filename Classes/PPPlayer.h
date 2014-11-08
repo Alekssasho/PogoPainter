@@ -41,7 +41,7 @@ public:
     }
 
     Vec2 pos;
-    int points;
+    int points = 0;
     PPColor color;
     Sprite* pSprite;
     

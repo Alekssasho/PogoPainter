@@ -101,15 +101,23 @@ bool PogoPainter::init()
     board.at(7, 7).color = aiPlayer->color;
     players.push_back(move(aiPlayer));
 
-//    this->scheduleUpdate();
-    
-//
-
     PPBonusManager::getInstance().surface = this;
 
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/checkpoint.wav");
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/arrow.wav");
-
+    
+    pSprite = Sprite::createWithTexture(textures[PPColor::Red]);
+    
+    pSprite->setPosition(visibleSize.width / 4.0, visibleSize.height - 30);
+    pSprite->setScaleY(60 / pSprite->getBoundingBox().size.height);
+    pSprite->setScaleX((visibleSize.width / 2) / pSprite->getContentSize().width);
+    this->addChild(pSprite, 0, 100);
+    pSprite = Sprite::createWithTexture(textures[PPColor::Blue]);
+    pSprite->setPosition((visibleSize.width / 4.0) * 3, visibleSize.height - 30);
+    pSprite->setScaleY(60 / pSprite->getBoundingBox().size.height);
+    pSprite->setScaleX((visibleSize.width / 2) / pSprite->getContentSize().width);
+    this->addChild(pSprite, 0, 200);
+    
     return true;
 }
 
@@ -144,6 +152,8 @@ void PogoPainter::gameTick(float dt)
         board.at(pl->getPosition()).color = pl->color;
     }
     
+    int maxPoints = 0;
+    
     for(auto& pl : players) {
         auto dir = pl->getDirection();
     
@@ -166,6 +176,8 @@ void PogoPainter::gameTick(float dt)
         } else {
             //TODO: feedback on wall hit
         }
+        
+        maxPoints += pl->points + 10;
     }
 
     if (ticks % 2) {
@@ -178,9 +190,32 @@ void PogoPainter::gameTick(float dt)
             }
         });
     }
-
     
-    //TODO: handle bonus handler
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    auto coef = visibleSize.width / maxPoints;
+    
+    for(auto& pl : players) {
+        float size = (pl->points + 10) * coef;
+        switch (pl->color) {
+            case PPColor::Red:
+            {
+                auto pSprite = static_cast<Sprite*>(this->getChildByTag(100));
+                pSprite->setPosition(Vec2(size / 2.0, visibleSize.height - 30));
+                auto s = pSprite->getBoundingBox();
+                pSprite->setScaleX(size / pSprite->getContentSize().width);
+                break;
+            }
+            case PPColor::Blue:
+            {
+                auto pSprite = static_cast<Sprite*>(this->getChildByTag(200));
+                pSprite->setPosition(Vec2(visibleSize.width - size / 2.0, visibleSize.height - 30));
+                pSprite->setScaleX(size / pSprite->getContentSize().width);
+                break;
+            }
+            default:
+                break;
+        }
+    }
 }
 
 void PogoPainter::update(float dt)
@@ -190,6 +225,7 @@ void PogoPainter::update(float dt)
         this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), TICK_DELAY);
         init = true;
     }
+    
     for(auto& cell : board.cells) {
         cell.sprite->setTexture(textures[cell.color]);
     }
