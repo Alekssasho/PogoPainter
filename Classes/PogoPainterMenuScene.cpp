@@ -52,6 +52,16 @@ bool PogoPainterMenu::init()
     
     registerEventListener(startGameLabel, eventListener);
     
+    FadeIn* fadeIn = FadeIn::create(.5f);
+    fadeIn->setDuration(1.f);
+    FadeOut* fadeOut = FadeOut::create(1.0f);
+    fadeOut->setDuration(.5f);
+    Sequence* seq = Sequence::createWithTwoActions(fadeIn, fadeOut);
+    
+    RepeatForever* repeat = RepeatForever::create(seq);
+    
+    startGameLabel->runAction(repeat);
+    
     return true;
 }
 

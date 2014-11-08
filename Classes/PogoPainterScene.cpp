@@ -86,6 +86,17 @@ bool PogoPainter::init()
     
     board.at(0, 0).color = pHumanPlayer->color;
     players.push_back(move(pHumanPlayer));
+    
+    auto aiSprite = Sprite::create("Player/player_blue.png");
+    aiSprite->setPosition(board.at(7, 7).sprite->getPosition());
+    aiSprite->setScale(board.at(7, 7).sprite->getScale());
+    this->addChild(aiSprite, 2);
+    
+    auto aiPlayer = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(Vec2(7, 7), PPColor::Blue, *this, aiSprite));
+    aiPlayer->setDirection(PPDirection::Down);
+    
+    board.at(7, 7).color = aiPlayer->color;
+    players.push_back(move(aiPlayer));
 
     this->scheduleUpdate();
     
@@ -116,9 +127,9 @@ void PogoPainter::gameTick(float dt)
     
     for(auto& pl : players) {
         auto dir = pl->getDirection();
-        auto res = board.moveInDir(Vec2(pl->getPosition()), dir);
-        if (Vec2(pl->getPosition()) != res) {
-            pl->getPosition() = res;
+        auto res = board.moveInDir(pl->getPosition(), dir);
+        if (pl->getPosition() != res) {
+            pl->pos = res;
             auto action = MoveTo::create(TICK_DELAY, board.at(pl->getPosition()).sprite->getPosition());
             pl->pSprite->runAction(action);
             

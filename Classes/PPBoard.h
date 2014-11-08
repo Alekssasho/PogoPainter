@@ -46,6 +46,8 @@ public:
     std::array<PPCell, PPBoardSize * PPBoardSize> cells;
 
     void each(std::function<void(PPCell &)> cb);
+    
+    PPBoard();
 private:
 };
 

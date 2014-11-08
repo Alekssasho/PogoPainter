@@ -8,6 +8,16 @@
 
 #include "PPBoard.h"
 
+PPBoard::PPBoard()
+{
+    for(int x = 0; x < PPBoardSize; ++x) {
+        for(int y = 0; y < PPBoardSize; ++y) {
+            this->at(x, y).x = x;
+            this->at(x, y).y = y;
+        }
+    }
+}
+
 Vec2 PPBoard::moveInDir(const Vec2& pos, PPDirection dir)
 {
     static const Vec2 directionVectors[] = {Vec2(-1, 0), Vec2(0, 1), Vec2(1, 0), Vec2(0, -1)};

@@ -34,6 +34,8 @@ public:
     PPColor color;
     Sprite* pSprite;
     
+    virtual ~PPPlayer() {}
+    
 protected:
     PPDirection currentDirection;
     PPBoard& board;
@@ -55,7 +57,13 @@ public:
     
     PPDirection getDirection() override;
 private:
-    double calcDistanceTo(int x, int y) const;
+    PPBonus* following = nullptr;
+    
+    double calcDistanceFromPlayerTo(int x, int y) const;
+    double calcDistanceFromTo(int fromX, int fromY, int toX, int toY) const;
+    PPBonus* getNearestBonus(std::vector<PPBonus*> bonuses);
+    PPCheckpoint* getNearestCheckpoint(std::vector<PPCheckpoint*> checkpoints);
+    PPDirection getNextDirection();
 };
 
 #endif /* defined(__PogoPainter__PPPlayer__) */

@@ -16,6 +16,11 @@ PPPlayer::PPPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pS)
 : pos(pos), color(c), board(scene.getBoard()), pSprite(pS)
 {}
 
+//
+//
+//
+//
+//
 PPHumanPlayer::PPHumanPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pS)
 : PPPlayer(pos, c, scene, pS)
 {
@@ -58,13 +63,104 @@ PPStupidAiPlayer::PPStupidAiPlayer(const Vec2 & pos, PPColor c, PogoPainter& sce
     
 }
 
+//
+//
+//
+//
+//
 PPDirection PPStupidAiPlayer::getDirection()
 {
+    
     vector<PPCheckpoint*> checkpoints = PPBonusManager::getInstance().getCheckpoints();
     vector<PPBonus*> bonuses = PPBonusManager::getInstance().getBonuses();
-    return PPDirection::None;
+    
+    if (checkpoints.size() > 0 ) {
+        following = getNearestCheckpoint(checkpoints);
+    } else if (bonuses.size() > 0) {
+        following = getNearestBonus(bonuses);
+    } else {
+        following = nullptr;
+    }
+    
+    return getNextDirection();
 }
 
-double PPStupidAiPlayer::calcDistanceTo(int x, int y) const {
-    return sqrt(pow(pos.x - x, 2) + pow(pos.y - y, 2));
+double PPStupidAiPlayer::calcDistanceFromPlayerTo(int x, int y) const
+{
+    return calcDistanceFromTo(pos.x, pos.y, x, y);
+}
+
+double PPStupidAiPlayer::calcDistanceFromTo(int fromX, int fromY, int toX, int toY) const
+{
+    return sqrt(pow(fromX - toX, 2) + pow(fromY - toY, 2));
+}
+
+PPBonus* PPStupidAiPlayer::getNearestBonus(vector<PPBonus*> bonuses)
+{
+    double minDistance = 1000;
+    PPBonus* selected;
+   
+    for (PPBonus* bonus: bonuses) {
+        double distance = this->calcDistanceFromPlayerTo(bonus->getCell().x, bonus->getCell().y);
+        
+        if (distance < minDistance) {
+            minDistance = distance;
+            selected = bonus;
+        }
+    }
+    return selected;
+}
+
+PPCheckpoint* PPStupidAiPlayer::getNearestCheckpoint(std::vector<PPCheckpoint*> checkpoints)
+{
+    double minDistance = 1000;
+    PPCheckpoint* selected;
+    
+    for (PPCheckpoint* bonus: checkpoints) {
+        double distance = this->calcDistanceFromPlayerTo(bonus->getCell().x, bonus->getCell().y);
+        
+        if (distance < minDistance) {
+            minDistance = distance;
+            selected = bonus;
+        }
+    }
+    return selected;
+}
+
+PPDirection PPStupidAiPlayer::getNextDirection()
+{
+    if(!following) {
+        return currentDirection;
+    }
+    
+    double distance = calcDistanceFromPlayerTo(following->getCell().x, following->getCell().y);
+    double nearCellDistance = 10000;
+    
+    PPDirection directions[] = {PPDirection::Down, PPDirection::Up, PPDirection::Left, PPDirection::Right};
+    
+    for (PPDirection dir: directions) {
+        switch (dir) {
+            case Up:
+                nearCellDistance = calcDistanceFromTo(pos.x, pos.y + 1, following->getCell().x, following->getCell().y);
+                break;
+            case Down:
+                nearCellDistance = calcDistanceFromTo(pos.x, pos.y - 1, following->getCell().x, following->getCell().y);
+                break;
+            case Left:
+                nearCellDistance = calcDistanceFromTo(pos.x - 1, pos.y, following->getCell().x, following->getCell().y);
+                break;
+            case Right:
+                nearCellDistance =  calcDistanceFromTo(pos.x + 1, pos.y, following->getCell().x, following->getCell().y);
+                break;
+            case None:
+                nearCellDistance = calcDistanceFromPlayerTo(following->getCell().x, following->getCell().y);
+                break;
+        }
+        
+        if (distance > nearCellDistance) {
+            distance = nearCellDistance;
+            currentDirection = dir;
+        }
+    }
+    return currentDirection;
 }
