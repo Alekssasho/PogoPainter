@@ -86,7 +86,7 @@ bool PogoPainter::init()
 
     this->scheduleUpdate();
     
-    this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), 1);
+    this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), 0.75f);
     
     return true;
 }
@@ -108,7 +108,12 @@ void PogoPainter::gameTick(float dt)
         auto res = board.moveInDir(Vec2(pl->x, pl->y), dir);
         if(Vec2(pl->x, pl->y) != res) {
             pl->x = res.x, pl->y = res.y;
-            //Add move animation
+            auto action = MoveTo::create(0.75f, board.at(pl->x, pl->y).sprite->getPosition());
+            pl->pSprite->runAction(action);
+            
+            pl->pSprite->scheduleOnce([this, &pl](float dt) {
+                this->board.at(pl->x, pl->y).color = pl->color;
+            }, 0.35f, "color");
         } else {
             //TODO: feedback on wall hit
         }
