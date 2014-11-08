@@ -47,6 +47,7 @@ bool PogoPainterMenu::init()
         
         if (diff.getLength() <= 50) {
             Director::getInstance()->getRunningScene()->removeChild(this);
+            Director::getInstance()->getRunningScene()->getChildren().back()->scheduleUpdate();
         }
     };
     

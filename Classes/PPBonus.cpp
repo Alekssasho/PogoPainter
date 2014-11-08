@@ -84,7 +84,9 @@ void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer
         board.at(pos).bonus = std::unique_ptr<PPBonus>(checkpoints.back());
         if (surface) {
             checkpoints.back()->sprite->setPosition(checkpoints.back()->getCell().sprite->getPosition());
-            checkpoints.back()->sprite->setScale(checkpoints.back()->getCell().sprite->getScale());
+            checkpoints.back()->sprite->setScale(0.01);
+            auto targetScale = checkpoints.back()->getCell().sprite->getScale();
+            checkpoints.back()->sprite->runAction(ScaleTo::create(0.20f, targetScale));
             surface->addChild(checkpoints.back()->sprite);
         }
         return;

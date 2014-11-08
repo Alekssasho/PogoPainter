@@ -98,9 +98,9 @@ bool PogoPainter::init()
     board.at(7, 7).color = aiPlayer->color;
     players.push_back(move(aiPlayer));
 
-    this->scheduleUpdate();
+//    this->scheduleUpdate();
     
-    this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), TICK_DELAY);
+//
 
     PPBonusManager::getInstance().surface = this;
 
@@ -144,7 +144,7 @@ void PogoPainter::gameTick(float dt)
     if (ticks % 2) {
         PPBonusManager::getInstance().each([&](PPBonus * bonus) {
             bonus->update(board);
-            if (PPArrow * arrow = dynamic_cast<PPArrow*>(bonus)) {
+            if (dynamic_cast<PPArrow*>(bonus)) {
                 bonus->sprite->runAction(
                     RotateBy::create(TICK_DELAY / 2, 90)
                     );
@@ -158,6 +158,11 @@ void PogoPainter::gameTick(float dt)
 
 void PogoPainter::update(float dt)
 {
+    static bool init = false;
+    if(!init) {
+        this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), TICK_DELAY);
+        init = true;
+    }
     for(auto& cell : board.cells) {
         cell.sprite->setTexture(textures[cell.color]);
     }
