@@ -41,46 +41,48 @@ else()
 set(ARCH_DIR "32-bit")
 endif()
 
+set(GAME_SRC
+  Classes/AppDelegate.cpp
+  Classes/PogoPainterScene.cpp
+  Classes/PPBoard.cpp
+  Classes/PPBonus.cpp
+)
+
+set(GAME_HEADERS
+  Classes/AppDelegate.h
+  Classes/PogoPainterScene.h
+  Classes/PPBoard.h
+  Classes/PPBonus.h
+     )
+
 if( APPLE AND IOS )
 include_directories(Classes)
-set(GAME_SRC
+set(GAME_SRC ${GAME_SRC}
   proj.ios_mac/ios/main.m
   proj.ios_mac/ios/RootViewController.mm
   proj.ios_mac/ios/AppController.mm
-  Classes/AppDelegate.cpp
-  Classes/HelloWorldScene.cpp
 )
-set(GAME_HEADERS
-  Classes/AppDelegate.h
-  Classes/HelloWorldScene.h
+set(GAME_HEADERS ${GAME_HEADERS}
   proj.ios_mac/ios/RootViewController.h
   proj.ios_mac/ios/AppController.h
 )
 elseif(APPLE) #desktop
 include_directories(Classes)
 include(Classes/CMakeLists.txt)
-set(GAME_SRC
+set(GAME_SRC ${GAME_SRC}
   proj.ios_mac/mac/main.cpp
-  Classes/AppDelegate.cpp
-  Classes/HelloWorldScene.cpp
 )
-set(GAME_HEADERS
-  Classes/AppDelegate.h
-  Classes/HelloWorldScene.h
+set(GAME_HEADERS ${GAME_HEADERS}
 )
 elseif( UNIX AND NOT APPLE) #assume linux
-set(GAME_SRC
+set(GAME_SRC ${GAME_SRC}
   proj.linux/main.cpp
-  Classes/AppDelegate.cpp
-  Classes/HelloWorldScene.cpp
 )
 elseif ( WIN32 )
-set(GAME_SRC
+set(GAME_SRC ${GAME_SRC}
   proj.win32/main.cpp
   proj.win32/main.h
   proj.win32/resource.h
-  Classes/AppDelegate.cpp
-  Classes/HelloWorldScene.cpp
 )
 endif()
 
