@@ -93,6 +93,7 @@ bool PogoPainter::init()
 
 void PogoPainter::gameTick(float dt)
 {
+    PPBonusManager::getInstance().update(board, players);
     for(auto& pl : players) {
         auto& pBonus = board.at(pl->x, pl->y).bonus;
         if(pBonus) {

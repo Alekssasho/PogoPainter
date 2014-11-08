@@ -9,6 +9,10 @@
 #ifndef __PogoPainter__PPBonus__
 #define __PogoPainter__PPBonus__
 
+#include <vector>
+#include <random>
+#include <memory>
+
 class PPPlayer;
 class PPBoard;
 class PPCell;
@@ -54,5 +58,32 @@ public:
     void update(PPBoard& board) override;
     void apply(PPPlayer& player, PPBoard& board) override;
 };
+
+#define PPBoardSize 8
+
+class PPBonusManager
+{
+    std::vector<PPBonus*> bonuses;
+    std::vector<PPCheckpoint*> checkpoints;
+
+    const int max_bonuses = 3;
+    const int target_checkpoints = 3;
+    const int steps_delay = 4;
+
+    std::mt19937 generator;
+    std::uniform_int_distribution<int> bonus_picker, position_picker;
+
+    PPBonusManager() : bonus_picker(0, 2), position_picker(PPBoardSize - 1, PPBoardSize - 1) {}
+
+public:
+    static PPBonusManager& getInstance() {
+        static PPBonusManager instance;
+        return instance;
+    }
+
+    void update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer>> & players);
+    
+};
+
 
 #endif /* defined(__PogoPainter__PPBonus__) */

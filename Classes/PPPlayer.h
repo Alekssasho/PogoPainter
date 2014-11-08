@@ -20,7 +20,10 @@ public:
     PPPlayer(int cx, int cy, PPColor c, PogoPainter& scene, Sprite* pSprite);
     
     virtual PPDirection getDirection() = 0;
-    
+    Vec2 getPosition() const {
+        return Vec2(x, y);
+    }
+
     int x, y;
     int points;
     PPColor color;
