@@ -13,6 +13,11 @@ class PPPlayer;
 class PPBoard;
 class PPCell;
 
+enum PPDirection
+{
+    Left, Up, Right, Down
+};
+
 class PPBonus
 {
 public:
@@ -21,6 +26,7 @@ public:
     {}
     
     virtual void apply(PPPlayer& pPlayer, PPBoard& board) = 0;
+    virtual void update(PPBoard& board);
     virtual ~PPBonus() {}
 private:
     PPCell& mCell;
@@ -35,6 +41,18 @@ public:
     
     void apply(PPPlayer& pPlayer, PPBoard& board) override;
 private:
+};
+
+class PPArrow : public PPBonus
+{
+    PPDirection dir;
+public:
+    PPArrow(PPCell& cell)
+        :PPBonus(cell)
+    {}
+
+    void update(PPBoard& board) override;
+    void apply(PPPlayer& pPlayer, PPBoard& board) override;
 };
 
 #endif /* defined(__PogoPainter__PPBonus__) */

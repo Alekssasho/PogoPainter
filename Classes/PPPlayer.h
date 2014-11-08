@@ -10,16 +10,9 @@
 #define __PogoPainter__PPPlayer__
 
 #include "PPBoard.h"
+#include "PPBonus.h"
 
 class PogoPainter;
-
-enum PPDirection
-{
-    Left,
-    Right,
-    Up,
-    Down
-};
 
 class PPPlayer
 {

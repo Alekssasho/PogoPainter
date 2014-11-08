@@ -14,6 +14,7 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/AppDelegate.cpp \
                    ../../Classes/PPBoard.cpp \
                    ../../Classes/PPBonus.cpp \
+                   ../../Classes/PPPlayer.cpp \
                    ../../Classes/PogoPainterScene.cpp
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes

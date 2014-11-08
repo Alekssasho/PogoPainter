@@ -141,6 +141,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\PogoPainterScene.cpp" />
     <ClCompile Include="..\Classes\PPBoard.cpp" />
     <ClCompile Include="..\Classes\PPBonus.cpp" />
+    <ClCompile Include="..\Classes\PPPlayer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +149,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\PogoPainterScene.h" />
     <ClInclude Include="..\Classes\PPBoard.h" />
     <ClInclude Include="..\Classes\PPBonus.h" />
+    <ClInclude Include="..\Classes\PPPlayer.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

@@ -19,6 +19,7 @@
     <ClCompile Include="..\Classes\PogoPainterScene.cpp" />
     <ClCompile Include="..\Classes\PPBoard.cpp" />
     <ClCompile Include="..\Classes\PPBonus.cpp" />
+    <ClCompile Include="..\Classes\PPPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -28,6 +29,7 @@
     <ClInclude Include="..\Classes\PogoPainterScene.h" />
     <ClInclude Include="..\Classes\PPBoard.h" />
     <ClInclude Include="..\Classes\PPBonus.h" />
+    <ClInclude Include="..\Classes\PPPlayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">

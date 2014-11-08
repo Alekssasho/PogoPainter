@@ -47,21 +47,6 @@ bool PogoPainter::init()
     auto menu = Menu::create(closeItem, NULL);
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
-
-    /////////////////////////////
-    // 3. add your codes below...
-
-    // add a label shows "Hello World"
-    // create and initialize a label
-    
-//    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
-//    
-//    // position the label on the center of the screen
-//    label->setPosition(Vec2(origin.x + visibleSize.width/2,
-//                            origin.y + visibleSize.height - label->getContentSize().height));
-//
-//    // add the label as a child to this layer
-//    this->addChild(label, 1);
     
     textures[PPColor::Blue]   = Director::getInstance()->getTextureCache()->addImage("Cell/cell_blue.png");
     textures[PPColor::Red]    = Director::getInstance()->getTextureCache()->addImage("Cell/cell_red.png");
@@ -74,7 +59,7 @@ bool PogoPainter::init()
     
     for(int x = 0; x < 8; ++x) {
         for(int y = 0; y < 8; ++y) {
-            board.at(x, y).sprite = Sprite::createWithTexture(textures[PPColor::Empty]);
+            board.at(x, y).sprite = Sprite::createWithTexture(textures[board.at(x, y).color]);
             Sprite* pSprite = board.at(x, y).sprite;
             pSprite->setPosition(
                 offset +

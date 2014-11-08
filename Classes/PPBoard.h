@@ -30,10 +30,12 @@ class PPCell
 {
 public:
     int x, y;
-    PPColor color;
+    PPColor color = PPColor::Empty;
     std::unique_ptr<PPBonus> bonus;
     Sprite* sprite;
 };
+
+#define PPBoardSize 8
 
 class PPBoard
 {
