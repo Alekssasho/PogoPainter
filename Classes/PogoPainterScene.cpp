@@ -84,12 +84,18 @@ bool PogoPainter::init()
 
             pSprite->setPosition(pSprite->getPosition() + Vec2(0, visibleSize.height - 8 * cellSize - 8));
             pSprite->setScale((cellSize - 4) / pSprite->getBoundingBox().size.width);
-            
             this->addChild(pSprite);
         }
     }
     
+    players.push_back(unique_ptr<PPHumanPlayer>(new PPHumanPlayer(0, 0, PPColor::Red, *this)));
+    
     return true;
+}
+
+void PogoPainter::registerEventListener(EventListener* listener)
+{
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 }
 
 void PogoPainter::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)

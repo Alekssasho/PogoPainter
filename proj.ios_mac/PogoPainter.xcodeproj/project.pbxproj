@@ -18,6 +18,7 @@
 		2CB69F821A0D9ADC00E2B018 /* Cell in Resources */ = {isa = PBXBuildFile; fileRef = 2CB69F7E1A0D9ADC00E2B018 /* Cell */; };
 		2CB69F831A0D9ADC00E2B018 /* General in Resources */ = {isa = PBXBuildFile; fileRef = 2CB69F7F1A0D9ADC00E2B018 /* General */; };
 		2CB69F841A0D9ADC00E2B018 /* Player in Resources */ = {isa = PBXBuildFile; fileRef = 2CB69F801A0D9ADC00E2B018 /* Player */; };
+		2CB69F871A0DCF5500E2B018 /* PPPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB69F851A0DCF5500E2B018 /* PPPlayer.cpp */; };
 		3EACC98F19EE6D4300EB3C5E /* res in Resources */ = {isa = PBXBuildFile; fileRef = 3EACC98E19EE6D4300EB3C5E /* res */; };
 		3EACC99019EE6D4300EB3C5E /* res in Resources */ = {isa = PBXBuildFile; fileRef = 3EACC98E19EE6D4300EB3C5E /* res */; };
 		46880B7B19C43A67006E1F66 /* CloseNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 46880B7619C43A67006E1F66 /* CloseNormal.png */; };
@@ -120,6 +121,8 @@
 		2CB69F7E1A0D9ADC00E2B018 /* Cell */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cell; sourceTree = "<group>"; };
 		2CB69F7F1A0D9ADC00E2B018 /* General */ = {isa = PBXFileReference; lastKnownFileType = folder; path = General; sourceTree = "<group>"; };
 		2CB69F801A0D9ADC00E2B018 /* Player */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Player; sourceTree = "<group>"; };
+		2CB69F851A0DCF5500E2B018 /* PPPlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PPPlayer.cpp; sourceTree = "<group>"; };
+		2CB69F861A0DCF5500E2B018 /* PPPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPPlayer.h; sourceTree = "<group>"; };
 		3EACC98E19EE6D4300EB3C5E /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = res; sourceTree = "<group>"; };
 		46880B7619C43A67006E1F66 /* CloseNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloseNormal.png; sourceTree = "<group>"; };
 		46880B7719C43A67006E1F66 /* CloseSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloseSelected.png; sourceTree = "<group>"; };
@@ -309,6 +312,8 @@
 				2CB69F781A0D8E1C00E2B018 /* PPBoard.h */,
 				2CB69F7A1A0D918700E2B018 /* PPBonus.cpp */,
 				2CB69F7B1A0D918700E2B018 /* PPBonus.h */,
+				2CB69F851A0DCF5500E2B018 /* PPPlayer.cpp */,
+				2CB69F861A0DCF5500E2B018 /* PPPlayer.h */,
 			);
 			name = Classes;
 			path = ../Classes;
@@ -513,6 +518,7 @@
 			files = (
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				46880B8A19C43A87006E1F66 /* PogoPainterScene.cpp in Sources */,
+				2CB69F871A0DCF5500E2B018 /* PPPlayer.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				2CB69F7C1A0D918700E2B018 /* PPBonus.cpp in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,

@@ -7,3 +7,9 @@
 //
 
 #include "PPBonus.h"
+#include "PPPlayer.h"
+
+void PPCheckpoint::apply(PPPlayer& pPlayer, PPBoard& board)
+{
+    
+}

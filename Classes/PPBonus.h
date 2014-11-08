@@ -16,9 +16,12 @@ class PPCell;
 class PPBonus
 {
 public:
-    PPBonus(PPCell& cell);
+    PPBonus(PPCell& cell)
+    : mCell(cell)
+    {}
+    
     virtual void apply(PPPlayer& pPlayer, PPBoard& board) = 0;
-    virtual ~PPBonus();
+    virtual ~PPBonus() {}
 private:
     PPCell& mCell;
 };
@@ -26,6 +29,10 @@ private:
 class PPCheckpoint : public PPBonus
 {
 public:
+    PPCheckpoint(PPCell& cell)
+    :PPBonus(cell)
+    {}
+    
     void apply(PPPlayer& pPlayer, PPBoard& board) override;
 private:
 };
