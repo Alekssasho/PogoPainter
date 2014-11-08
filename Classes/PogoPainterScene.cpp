@@ -87,7 +87,9 @@ bool PogoPainter::init()
     this->scheduleUpdate();
     
     this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), 0.75f);
-    
+
+    PPBonusManager::getInstance().surface = this;
+
     return true;
 }
 
@@ -98,6 +100,8 @@ void PogoPainter::gameTick(float dt)
         auto& pBonus = board.at(pl->x, pl->y).bonus;
         if(pBonus) {
             pBonus->apply(*pl, board);
+            this->removeChild(pBonus->sprite);
+            PPBonusManager::getInstance().removeBonus(&*pBonus);
             board.at(pl->x, pl->y).bonus.reset();
         }
         
