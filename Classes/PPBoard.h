@@ -12,6 +12,8 @@
 #include <array>
 #include <cocos2d.h>
 
+#include "PPPlayer.h"
+
 using namespace cocos2d;
 
 enum class PPColor {
@@ -36,6 +38,7 @@ public:
 class PPBoard
 {
 public:
+    Vec2 moveInDir(Vec2& pos, PPDirection dir);
     PPCell& at(int x, int y) { return cells[x + y * 8]; }
     std::array<PPCell, 8 * 8> cells;
 private:

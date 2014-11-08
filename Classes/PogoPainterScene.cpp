@@ -90,23 +90,54 @@ bool PogoPainter::init()
     
     players.push_back(unique_ptr<PPHumanPlayer>(new PPHumanPlayer(0, 0, PPColor::Red, *this)));
     
+    this->scheduleUpdate();
+    
+    this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), 1);
+    
     return true;
+}
+
+void PogoPainter::gameTick(float dt)
+{
+    for(auto& pl : players) {
+        auto pBonus = board.at(pl.x, pl.y).bonus;
+        if(pBonus) {
+            pBonus->apply(pl, board);
+            board.at(pl.x, pl.y).bonus.reset();
+        }
+    }
+    
+    for(auto& pl : players) {
+        auto dir = pl->getDirection();
+        auto res = board.moveInDir(Vec2(pl.x, pl.y), dir);
+        if(Vec2(pl.x, pl.y) != res) {
+            pl.x = res.x, pl.y = res.y;
+            //Add move animation
+        } else {
+            //TODO: feedback on wall hit
+        }
+    }
+    
+    for(auto& cell : board.cells) {
+        if(cell.bonus) {
+            cell.bonus->update(board);
+        }
+    }
+    
+    //TODO: handle bonus handler
+}
+
+void PogoPainter::update(float dt)
+{
+    for(auto& cell : board.cells) {
+        cell.sprite->setTexture(textures[cell.color]);
+    }
 }
 
 void PogoPainter::registerEventListener(EventListener* listener)
 {
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 }
-
-void PogoPainter::draw(Renderer *renderer, const Mat4& transform, uint32_t flags)
-{
-    for(auto& cell : board.cells) {
-        cell.sprite->setTexture(textures[cell.color]);
-    }
-    
-    this->Layer::draw(renderer, transform, flags);
-}
-
 
 void PogoPainter::menuCloseCallback(Ref* pSender)
 {

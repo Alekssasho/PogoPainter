@@ -25,7 +25,9 @@ public:
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     virtual bool init();
     
-    void draw(Renderer *renderer, const Mat4& transform, uint32_t flags) override;
+    void update(float dt) override;
+    
+    void gameTick(float dt);
     
     PPBoard& getBoard() { return board; }
     
