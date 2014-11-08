@@ -22,6 +22,7 @@ public:
     virtual PPDirection getDirection() = 0;
     
     int x, y;
+    int points;
     PPColor color;
 private:
     PPBoard& board;

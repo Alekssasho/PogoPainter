@@ -17,3 +17,10 @@ Vec2 PPBoard::moveInDir(const Vec2& pos, PPDirection dir)
         return pos;
     return result;
 }
+
+void PPBoard::each(std::function<void(PPCell &)> cb)
+{
+    for (auto & cell : cells) {
+        cb(cell);
+    }
+}

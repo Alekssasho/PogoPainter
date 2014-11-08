@@ -25,7 +25,7 @@ public:
     : mCell(cell)
     {}
     
-    virtual void apply(PPPlayer& pPlayer, PPBoard& board) = 0;
+    virtual void apply(PPPlayer& player, PPBoard& board) = 0;
     virtual void update(PPBoard& board);
     virtual ~PPBonus() {}
 private:
@@ -39,7 +39,7 @@ public:
     :PPBonus(cell)
     {}
     
-    void apply(PPPlayer& pPlayer, PPBoard& board) override;
+    void apply(PPPlayer& player, PPBoard& board) override;
 private:
 };
 
@@ -52,7 +52,7 @@ public:
     {}
 
     void update(PPBoard& board) override;
-    void apply(PPPlayer& pPlayer, PPBoard& board) override;
+    void apply(PPPlayer& player, PPBoard& board) override;
 };
 
 #endif /* defined(__PogoPainter__PPBonus__) */

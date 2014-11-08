@@ -10,9 +10,15 @@
 #include "PPPlayer.h"
 #include "PPBoard.h"
 
-void PPCheckpoint::apply(PPPlayer& pPlayer, PPBoard& board)
+void PPCheckpoint::apply(PPPlayer& player, PPBoard& board)
 {
-    
+    board.each([&](PPCell & cell) {
+        if (cell.color == player.color) {
+            cell.color = PPColor::Empty;
+            ++player.points;
+            //TODO: Animate points
+        }
+    });
 }
 
 void PPBonus::update(PPBoard& board)
