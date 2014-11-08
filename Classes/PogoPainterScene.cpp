@@ -72,9 +72,11 @@ bool PogoPainter::init()
             this->addChild(pSprite);
         }
     }
-    
-    players.push_back(unique_ptr<PPHumanPlayer>(new PPHumanPlayer(0, 0, PPColor::Red, *this)));
-    
+
+    auto pHumanPlayer = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(0, 0, PPColor::Red, *this));
+    pHumanPlayer->currentDirection = PPDirection::Up;
+    players.push_back(move(pHumanPlayer));
+
     this->scheduleUpdate();
     
     this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), 1);
@@ -85,18 +87,18 @@ bool PogoPainter::init()
 void PogoPainter::gameTick(float dt)
 {
     for(auto& pl : players) {
-        auto pBonus = board.at(pl.x, pl.y).bonus;
+        auto& pBonus = board.at(pl->x, pl->y).bonus;
         if(pBonus) {
-            pBonus->apply(pl, board);
-            board.at(pl.x, pl.y).bonus.reset();
+            pBonus->apply(*pl, board);
+            board.at(pl->x, pl->y).bonus.reset();
         }
     }
     
     for(auto& pl : players) {
         auto dir = pl->getDirection();
-        auto res = board.moveInDir(Vec2(pl.x, pl.y), dir);
-        if(Vec2(pl.x, pl.y) != res) {
-            pl.x = res.x, pl.y = res.y;
+        auto res = board.moveInDir(Vec2(pl->x, pl->y), dir);
+        if(Vec2(pl->x, pl->y) != res) {
+            pl->x = res.x, pl->y = res.y;
             //Add move animation
         } else {
             //TODO: feedback on wall hit

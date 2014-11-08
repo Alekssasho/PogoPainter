@@ -12,7 +12,7 @@
 #include <array>
 #include <cocos2d.h>
 
-#include "PPPlayer.h"
+#include "PPBonus.h"
 
 using namespace cocos2d;
 
@@ -40,7 +40,7 @@ public:
 class PPBoard
 {
 public:
-    Vec2 moveInDir(Vec2& pos, PPDirection dir);
+    Vec2 moveInDir(const Vec2& pos, PPDirection dir);
     PPCell& at(int x, int y) { return cells[x + y * 8]; }
     std::array<PPCell, 8 * 8> cells;
 private:

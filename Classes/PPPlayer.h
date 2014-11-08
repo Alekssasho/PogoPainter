@@ -33,8 +33,9 @@ public:
     PPHumanPlayer(int x, int y, PPColor c, PogoPainter& scene);
     
     PPDirection getDirection() override;
-private:
+    
     PPDirection currentDirection;
+private:
 };
 
 #endif /* defined(__PogoPainter__PPPlayer__) */
