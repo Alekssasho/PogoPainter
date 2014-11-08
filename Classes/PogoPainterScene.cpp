@@ -54,7 +54,7 @@ bool PogoPainter::init()
     textures[PPColor::Green]  = Director::getInstance()->getTextureCache()->addImage("Cell/cell_green.png");
     textures[PPColor::Empty]  = Director::getInstance()->getTextureCache()->addImage("Cell/cell_empty.png");
     
-    Vec2 offset(4, 4);
+    Vec2 offset(4, 4 - 60);
     auto cellSize = (visibleSize.width - offset.x) / 8;
     
     for(int x = 0; x < 8; ++x) {
