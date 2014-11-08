@@ -55,5 +55,16 @@ PPDirection PPHumanPlayer::getDirection()
 PPStupidAiPlayer::PPStupidAiPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite)
     : PPPlayer(pos, c, scene, pSprite)
 {
+    
+}
 
+PPDirection PPStupidAiPlayer::getDirection()
+{
+    vector<PPCheckpoint*> checkpoints = PPBonusManager::getInstance().getCheckpoints();
+    vector<PPBonus*> bonuses = PPBonusManager::getInstance().getBonuses();
+    return PPDirection::None;
+}
+
+double PPStupidAiPlayer::calcDistanceTo(int x, int y) const {
+    return sqrt(pow(pos.x - x, 2) + pow(pos.y - y, 2));
 }

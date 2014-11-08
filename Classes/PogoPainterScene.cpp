@@ -82,7 +82,7 @@ bool PogoPainter::init()
     this->addChild(pSprite, 2);
     
     auto pHumanPlayer = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(Vec2::ZERO, PPColor::Red, *this, pSprite));
-    pHumanPlayer->currentDirection = PPDirection::Up;
+    pHumanPlayer->setDirection(PPDirection::Up);
     
     board.at(0, 0).color = pHumanPlayer->color;
     players.push_back(move(pHumanPlayer));

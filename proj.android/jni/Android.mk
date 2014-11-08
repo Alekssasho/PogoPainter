@@ -15,8 +15,8 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
                    ../../Classes/PPBoard.cpp \
                    ../../Classes/PPBonus.cpp \
                    ../../Classes/PPPlayer.cpp \
-                   ../../Classes/PogoPainterScene.cpp
-
+                   ../../Classes/PogoPainterScene.cpp \
+		   ../../Classes/PogoPainterMenuScene.cpp
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 
 LOCAL_STATIC_LIBRARIES := cocos2dx_static

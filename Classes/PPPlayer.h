@@ -23,12 +23,19 @@ public:
     Vec2 & getPosition() {
         return pos;
     }
+    
+    void setDirection(PPDirection dir)
+    {
+        currentDirection = dir;
+    }
 
     Vec2 pos;
     int points;
     PPColor color;
     Sprite* pSprite;
-private:
+    
+protected:
+    PPDirection currentDirection;
     PPBoard& board;
 };
 
@@ -38,8 +45,6 @@ public:
     PPHumanPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite);
     
     PPDirection getDirection() override;
-    
-    PPDirection currentDirection;
 private:
 };
 
@@ -47,6 +52,10 @@ class PPStupidAiPlayer : public PPPlayer
 {
 public:
     PPStupidAiPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite);
+    
+    PPDirection getDirection() override;
+private:
+    double calcDistanceTo(int x, int y) const;
 };
 
 #endif /* defined(__PogoPainter__PPPlayer__) */

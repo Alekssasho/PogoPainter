@@ -22,7 +22,7 @@ class PPCell;
 
 enum PPDirection
 {
-    Left, Up, Right, Down
+    Left, Up, Right, Down, None
 };
 
 class PPBonus
@@ -94,11 +94,19 @@ public:
         static PPBonusManager instance;
         return instance;
     }
+    
+    std::vector<PPBonus*> getBonuses()
+    {
+        return bonuses;
+    }
+    
+    std::vector<PPCheckpoint*> getCheckpoints() {
+        return checkpoints;
+    }
 
     void each(std::function<void(PPBonus*)> fn);
 
     void update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer>> & players);
-    
 };
 
 
