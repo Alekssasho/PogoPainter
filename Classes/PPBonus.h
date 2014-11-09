@@ -99,6 +99,11 @@ class PPBonusManager
 
 public:
 
+    void clear() {
+        bonuses.clear();
+        checkpoints.clear();
+    }
+
     void removeBonus(PPBonus * bonus);
 
     Node * surface;
