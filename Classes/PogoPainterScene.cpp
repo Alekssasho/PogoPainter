@@ -54,7 +54,7 @@ bool PogoPainter::init()
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu, 1);
 
-	timer = 24;
+	timer = 90;
 
 	textures[PPColor::Blue] = Director::getInstance()->getTextureCache()->addImage("Cell/cell_blue.png");
 	textures[PPColor::Red] = Director::getInstance()->getTextureCache()->addImage("Cell/cell_red.png");
@@ -108,10 +108,10 @@ void PogoPainter::gameTick(float dt)
 {
 	static int ticks = 0;
 	if (ticks % 2 == 0){
-		if ((timer - ticks) / 2 <= 10 && (timer - ticks) / 2 > 5)
-			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sounds/beep-06.wav");
-		else if ((timer - ticks) / 2 <= 5 && (timer - ticks) / 2 > 0)
+		if ((timer - ticks) / 2 <= 10 )
 			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sounds/beep-08.wav");
+		/*else if ((timer - ticks) / 2 <= 5 && (timer - ticks) / 2 > 0)
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sounds/beep-06.wav");*/
 	}
 	static_cast<Label*>(this->getChildByTag(42))->setString("Timer: " + to_string((timer - ticks) / 2));
 
