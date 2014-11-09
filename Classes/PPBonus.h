@@ -78,7 +78,7 @@ class PPBonusManager
 
     const int max_bonuses = 3;
     const int target_checkpoints = 3;
-    const int steps_delay = 3;
+    const int steps_delay = 2;
 
     std::mt19937 generator;
     std::uniform_int_distribution<int> bonus_picker, position_picker;

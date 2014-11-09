@@ -151,6 +151,7 @@ void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer
 	}
 	step2 = 0;
 
+
 	if (max_bonuses > bonuses.size()) {
 		auto pos = get_pos();
 		while (board.at(pos).bonus || check_player(pos)) {
