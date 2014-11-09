@@ -253,7 +253,7 @@ void PogoPainter::gameTick(float dt)
 		pSprite->setScaleX(size / pSprite->getContentSize().width);
         
         if(maxPointColor != pl->color) {
-            pSprite->setOpacity(150);
+            pSprite->setOpacity(111);
         } else {
             pSprite->setOpacity(255);
         }
