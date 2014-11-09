@@ -4,6 +4,34 @@
 
 #include "PogoPainterResultScene.h"
 
+#include "Poco/Net/TCPServer.h"
+#include "Poco/Net/TCPServerConnection.h"
+#include "Poco/Net/TCPServerParams.h"
+#include "Poco/Net/ServerSocket.h"
+
+using namespace Poco::Net;
+
+class EchoConnection : public TCPServerConnection {
+public:
+    EchoConnection(const StreamSocket& s) : TCPServerConnection(s) { }
+
+    void run() {
+        CCLOG("connected!\n");
+        StreamSocket& ss = socket();
+        try {
+            char buffer[256];
+            int n = ss.receiveBytes(buffer, sizeof(buffer));
+            while (n > 0) {
+                ss.sendBytes(buffer, n);
+                n = ss.receiveBytes(buffer, sizeof(buffer));
+            }
+        } catch (Poco::Exception& exc)
+        {
+            std::cerr << "EchoConnection: " << exc.displayText() << std::endl;
+        }
+    }
+};
+
 USING_NS_CC;
 
 Scene* PogoPainter::createScene()
@@ -119,6 +147,13 @@ bool PogoPainter::init()
     pSprite->setScaleY(60 / pSprite->getBoundingBox().size.height);
     pSprite->setScaleX((visibleSize.width / 2) / pSprite->getContentSize().width);
     this->addChild(pSprite, 0, 200);
+
+    
+    auto factory = new TCPServerConnectionFactoryImpl<EchoConnection>();
+    SocketAddress sa(IPAddress(), 8080);
+    ServerSocket sock(sa);
+    auto srv = new TCPServer(factory, sock);
+    srv->start();
     
     return true;
 }
