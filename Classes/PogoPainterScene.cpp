@@ -114,6 +114,17 @@ bool PogoPainter::init()
 	// add the label as a child to this layer
 	this->addChild(label, 1);
     
+    
+    auto indicator = Sprite::create("General/indicator.png");
+    
+    indicator->setPosition(Vec2(visibleSize.width / 2, (visibleSize.height - 8 * cellSize) / 2.0));
+    indicator->setScale(visibleSize.width / indicator->getContentSize().width,
+                        (visibleSize.height - 8 * cellSize) / indicator->getContentSize().height);
+    
+    indicator->setOpacity(175);
+    indicator->setPosition(indicator->getPosition() - Vec2(0, cellSize - 24));
+    this->addChild(indicator);
+    
     return true;
 }
 
