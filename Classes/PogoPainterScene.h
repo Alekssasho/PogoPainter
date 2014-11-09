@@ -21,6 +21,8 @@ private:
     vector<unique_ptr<PPPlayer>> players;
     map<PPColor, Texture2D*> textures;
 	int timer;
+    int ticks = 0;
+    bool mInit = false;
 public:
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static Scene* createScene();

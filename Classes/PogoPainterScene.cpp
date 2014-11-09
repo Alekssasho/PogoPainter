@@ -117,7 +117,7 @@ bool PogoPainter::init()
 
 void PogoPainter::gameTick(float dt)
 {
-	static int ticks = 0;
+//	static int ticks = 0;
 	if (ticks % 2 == 0){
 		if ((timer - ticks) / 2 <= 10 )
 			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sounds/beep-08.wav");
@@ -188,6 +188,9 @@ void PogoPainter::gameTick(float dt)
 
 	int maxPoints = 0;
 
+    PPColor maxPointColor;
+    int maxPointsPlayer = -1;
+    
 	for (auto& pl : players) {
 		auto dir = pl->getDirection();
 		pl->autorotate();
@@ -218,6 +221,12 @@ void PogoPainter::gameTick(float dt)
         if (pl->slowed > 0) {
             pl->slowed--;
         }
+        
+        if(pl->points > maxPointsPlayer) {
+            maxPointsPlayer = pl->points;
+            maxPointColor = pl->color;
+        }
+        
 		maxPoints += pl->points + 10;
 	}
 
@@ -242,6 +251,12 @@ void PogoPainter::gameTick(float dt)
 		auto pSprite = static_cast<Sprite*>(this->getChildByTag(100 + static_cast<int>(pl->color) * 100));
 		pSprite->setPosition(Vec2(sizeTillNow + size / 2.0, visibleSize.height - 30));
 		pSprite->setScaleX(size / pSprite->getContentSize().width);
+        
+        if(maxPointColor != pl->color) {
+            pSprite->setOpacity(150);
+        } else {
+            pSprite->setOpacity(255);
+        }
 
 		sizeTillNow += pSprite->getBoundingBox().size.width;
 	}
@@ -249,10 +264,9 @@ void PogoPainter::gameTick(float dt)
 
 void PogoPainter::update(float dt)
 {
-	static bool init = false;
-	if (!init) {
+	if (!mInit) {
 		this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), TICK_DELAY);
-		init = true;
+		mInit = true;
 	}
 
 	for (auto& cell : board.cells) {

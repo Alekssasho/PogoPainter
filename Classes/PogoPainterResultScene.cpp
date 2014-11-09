@@ -7,6 +7,7 @@
 //
 
 #include "PogoPainterResultScene.h"
+#include "PogoPainterScene.h"
 
 USING_NS_CC;
 
@@ -109,5 +110,13 @@ void PogoPainterResults::setResults(vector<int> res)
 		this->addChild(score);
 		i += 100;
 	}
-
+    
+    auto eventListener = EventListenerTouchOneByOne::create();
+    eventListener->onTouchBegan = [](Touch* t, Event* e) {
+        
+        Director::getInstance()->replaceScene(PogoPainter::createScene());
+        return true;
+    };
+    
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, this);
 }
