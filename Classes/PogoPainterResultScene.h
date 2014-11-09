@@ -17,13 +17,15 @@ using namespace std;
 class PogoPainterResults : public LayerColor
 {
 private:
-    
+	vector<int> results;
 public:
     static Scene* createScene();
     bool init() override;
     void update(float dt) override;
     
-    void registerEventListener(EventListener* listener);
+	void registerEventListener(EventListener* listener);
+
+	void setResults(vector<int> points);
     
     CREATE_FUNC(PogoPainterResults);
 };
