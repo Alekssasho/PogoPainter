@@ -201,8 +201,11 @@ void PogoPainter::gameTick(float dt)
 
 		auto res = board.moveInDir(pl->getPosition(), dir);
 		if (pl->getPosition() != res) {
-			pl->pos = res;
-			auto action = MoveTo::create(TICK_DELAY, board.at(pl->getPosition()).sprite->getPosition());
+            if (pl->slowed % 2 == 0) {
+                pl->pos = res;
+            }
+            float delay = TICK_DELAY;
+			auto action = MoveTo::create(delay, board.at(pl->getPosition()).sprite->getPosition());
 			pl->pSprite->runAction(action);
 
 			pl->pSprite->scheduleOnce([this, &pl](float dt) {
@@ -212,7 +215,9 @@ void PogoPainter::gameTick(float dt)
 		else {
 			//TODO: feedback on wall hit
 		}
-
+        if (pl->slowed > 0) {
+            pl->slowed--;
+        }
 		maxPoints += pl->points + 10;
 	}
 

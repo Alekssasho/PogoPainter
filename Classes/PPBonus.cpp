@@ -8,9 +8,7 @@
 
 #include "PPBonus.h"
 #include "PPPlayer.h"
-
-
-
+#include "PogoPainterScene.h"
 
 void PPCheckpoint::apply(PPPlayer& player, PPBoard& board)
 {
@@ -162,14 +160,14 @@ void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer
 		switch (bonus_picker(generator))
 		{
 		case 0:
-			bonus = new PPArrow(board.at(pos));
+			bonus = new PPSpeed(board.at(pos));
 			break;
 		case 1:
 			bonus = new PPArrow(board.at(pos));
 			break;
-		case 2:
-			bonus = new PPArrow(board.at(pos));
-			break;
+        case 2:
+            bonus = new PPArrow(board.at(pos));
+            break;
 		}
 		board.at(pos).bonus = std::unique_ptr<PPBonus>(bonus);
 		bonuses.push_back(bonus);
@@ -206,3 +204,13 @@ void PPBonusManager::removeBonus(PPBonus * bonus)
 	}
 }
     
+
+void PPSpeed::apply(PPPlayer& player, PPBoard& board)
+{
+    auto & players = static_cast<PogoPainter*>(player.pSprite->getParent())->getPlayers();
+    for (auto & p : players) {
+        if (&*p != &player) {
+            p->slowed = 8;
+        }
+    }
+}

@@ -68,6 +68,18 @@ public:
     void update(PPBoard& board) override;
     void apply(PPPlayer& player, PPBoard& board) override;
 };
+class PPSpeed : public PPBonus
+{
+public:
+    PPSpeed(PPCell& cell)
+        :PPBonus(cell)
+    {
+        sprite = Sprite::create("Bonuses/bonus_speed.png");
+    }
+
+    void update(PPBoard& board) override {}
+    void apply(PPPlayer& player, PPBoard& board) override;
+};
 
 #define PPBoardSize 8
 

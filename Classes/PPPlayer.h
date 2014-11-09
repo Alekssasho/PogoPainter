@@ -38,6 +38,7 @@ public:
 
     Vec2 pos;
     int points = 0;
+    int slowed = 0;
     PPColor color;
     Sprite* pSprite;
     

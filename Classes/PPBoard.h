@@ -48,7 +48,6 @@ public:
     void each(std::function<void(PPCell &)> cb);
     
     PPBoard();
-private:
 };
 
 #endif /* defined(__PogoPainter__PPBoard__) */

@@ -13,7 +13,7 @@
 using namespace cocos2d;
 
 PPPlayer::PPPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pS)
-: pos(pos), color(c), board(scene.getBoard()), pSprite(pS)
+    : pos(pos), color(c), board(scene.getBoard()), pSprite(pS), slowed(0)
 {}
 
 //
