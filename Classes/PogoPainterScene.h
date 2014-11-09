@@ -35,6 +35,7 @@ public:
     PPBoard& getBoard() { return board; }
     vector<unique_ptr<PPPlayer>>& getPlayers() { return players; }
     
+    void attachPlayer(PPColor color);
     void registerEventListener(EventListener* listener);
     
     // a selector callback

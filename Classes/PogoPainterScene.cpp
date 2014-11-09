@@ -81,36 +81,18 @@ bool PogoPainter::init()
         }
     }
 
-    auto pSprite = Sprite::create("Player/player_red.png");
-    pSprite->setPosition(board.at(0, 0).sprite->getPosition());
-    pSprite->setScale(board.at(0, 0).sprite->getScale());
-    pSprite->setRotation(-(45 + 90));
-    this->addChild(pSprite, 2);
+    attachPlayer(PPColor::Red);
+    attachPlayer(PPColor::Blue);
+    attachPlayer(PPColor::Green);
+    attachPlayer(PPColor::Yellow);
     
-    auto pHumanPlayer = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(Vec2::ZERO, PPColor::Red, *this, pSprite));
-    pHumanPlayer->setDirection(PPDirection::Up);
-    
-    board.at(0, 0).color = pHumanPlayer->color;
-    players.push_back(move(pHumanPlayer));
-    
-    auto aiSprite = Sprite::create("Player/player_blue.png");
-    aiSprite->setPosition(board.at(7, 7).sprite->getPosition());
-    aiSprite->setScale(board.at(7, 7).sprite->getScale());
-    aiSprite->setRotation(45);
-    this->addChild(aiSprite, 2);
-    
-    auto aiPlayer = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(Vec2(7, 7), PPColor::Blue, *this, aiSprite));
-    aiPlayer->setDirection(PPDirection::Down);
-    
-    board.at(7, 7).color = aiPlayer->color;
-    players.push_back(move(aiPlayer));
-
+   
     PPBonusManager::getInstance().surface = this;
 
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/checkpoint.wav");
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/arrow.wav");
     
-    pSprite = Sprite::createWithTexture(textures[PPColor::Red]);
+    Sprite* pSprite = Sprite::createWithTexture(textures[PPColor::Red]);
     
     pSprite->setPosition(visibleSize.width / 4.0, visibleSize.height - 30);
     pSprite->setScaleY(60 / pSprite->getBoundingBox().size.height);
@@ -256,6 +238,55 @@ void PogoPainter::update(float dt)
     for(auto& cell : board.cells) {
         cell.sprite->setTexture(textures[cell.color]);
     }
+}
+
+void PogoPainter::attachPlayer(PPColor color)
+{
+    Vec2 pos;
+    int rotation;
+    Sprite* pSprite;
+    unique_ptr<PPPlayer> player;
+    
+    switch (color) {
+        case PPColor::Red:
+            pos = Vec2(0, 0);
+            rotation = - (45 + 90);
+            pSprite = Sprite::create("Player/player_red.png");
+            player = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(pos, color, *this, pSprite));
+            player->setDirection(PPDirection::Up);
+            break;
+        case PPColor::Blue:
+            pos = Vec2(7, 7);
+            rotation = 45;
+            pSprite = Sprite::create("Player/player_blue.png");
+            player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
+            player->setDirection(PPDirection::Down);
+            break;
+        case PPColor::Green:
+            pos = Vec2(0, 7);
+            rotation = -45;
+            pSprite = Sprite::create("Player/player_green.png");
+            player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
+            player->setDirection(PPDirection::Right);
+            break;
+        case PPColor::Yellow:
+            pos = Vec2(7, 0);
+            rotation = -45 + 180;
+            pSprite = Sprite::create("Player/player_yellow.png");
+            player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
+            player->setDirection(PPDirection::Left);
+            break;
+        default:
+            break;
+    }
+    
+    pSprite->setPosition(board.at(pos).sprite->getPosition());
+    pSprite->setScale(board.at(pos).sprite->getScale());
+    pSprite->setRotation(rotation);
+    this->addChild(pSprite, 2);
+    
+    board.at(pos).color = player->color;
+    players.push_back(move(player));
 }
 
 void PogoPainter::registerEventListener(EventListener* listener)
