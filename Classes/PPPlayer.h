@@ -17,6 +17,8 @@ class PogoPainter;
 class PPPlayer
 {
 public:
+    enum class Color { R, G, B, Y };
+
     PPPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite);
     
     virtual PPDirection getDirection() = 0;

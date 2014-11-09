@@ -8,6 +8,7 @@
 #include "PPBoard.h"
 #include "PPBonus.h"
 #include "PPPlayer.h"
+#include "PPGameManager.h"
 
 using namespace cocos2d;
 using namespace std;
@@ -18,8 +19,8 @@ class PogoPainter : public Layer
 {
 private:
     PPBoard board;
-    vector<unique_ptr<PPPlayer>> players;
     map<PPColor, Texture2D*> textures;
+    map<PPPlayer::Color, Texture2D*> player_textures;
 public:
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static Scene* createScene();
@@ -30,9 +31,10 @@ public:
     void update(float dt) override;
     
     void gameTick(float dt);
-    
+
     PPBoard& getBoard() { return board; }
-    vector<unique_ptr<PPPlayer>>& getPlayers() { return players; }
+    Texture2D * getPlayerTexture(PPPlayer::Color col);
+    vector<PPPlayer*> getPlayers() { return PPGameManager::getInstance().getPlayers(); }
     
     void registerEventListener(EventListener* listener);
     

@@ -89,7 +89,7 @@
         }
     }
 
-    void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer>> & players)
+    void PPBonusManager::update(PPBoard& board, std::vector<PPPlayer*> & players)
     {
     static int step = 0;
     if (step++ < steps_delay) {

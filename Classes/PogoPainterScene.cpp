@@ -3,34 +3,7 @@
 #include "SimpleAudioEngine.h"  
 
 #include "PogoPainterResultScene.h"
-
-#include "Poco/Net/TCPServer.h"
-#include "Poco/Net/TCPServerConnection.h"
-#include "Poco/Net/TCPServerParams.h"
-#include "Poco/Net/ServerSocket.h"
-
-using namespace Poco::Net;
-
-class EchoConnection : public TCPServerConnection {
-public:
-    EchoConnection(const StreamSocket& s) : TCPServerConnection(s) { }
-
-    void run() {
-        CCLOG("connected!\n");
-        StreamSocket& ss = socket();
-        try {
-            char buffer[256];
-            int n = ss.receiveBytes(buffer, sizeof(buffer));
-            while (n > 0) {
-                ss.sendBytes(buffer, n);
-                n = ss.receiveBytes(buffer, sizeof(buffer));
-            }
-        } catch (Poco::Exception& exc)
-        {
-            std::cerr << "EchoConnection: " << exc.displayText() << std::endl;
-        }
-    }
-};
+#include "PPGameManager.h"
 
 USING_NS_CC;
 
@@ -88,6 +61,11 @@ bool PogoPainter::init()
     textures[PPColor::Green]  = Director::getInstance()->getTextureCache()->addImage("Cell/cell_green.png");
     textures[PPColor::Empty]  = Director::getInstance()->getTextureCache()->addImage("Cell/cell_empty.png");
     
+    player_textures[PPPlayer::Color::R] = Director::getInstance()->getTextureCache()->addImage("Player/player_red.png");
+    player_textures[PPPlayer::Color::G] = Director::getInstance()->getTextureCache()->addImage("Player/player_green.png");
+    player_textures[PPPlayer::Color::B] = Director::getInstance()->getTextureCache()->addImage("Player/player_blue.png");
+    player_textures[PPPlayer::Color::Y] = Director::getInstance()->getTextureCache()->addImage("Player/player_yellow.png");
+
     Vec2 offset(4, 4 - 60);
     auto cellSize = (visibleSize.width - offset.x) / 8;
     
@@ -107,36 +85,28 @@ bool PogoPainter::init()
         }
     }
 
-    auto pSprite = Sprite::create("Player/player_red.png");
-    pSprite->setPosition(board.at(0, 0).sprite->getPosition());
-    pSprite->setScale(board.at(0, 0).sprite->getScale());
-    pSprite->setRotation(-(45 + 90));
-    this->addChild(pSprite, 2);
-    
-    auto pHumanPlayer = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(Vec2::ZERO, PPColor::Red, *this, pSprite));
-    pHumanPlayer->setDirection(PPDirection::Up);
-    
-    board.at(0, 0).color = pHumanPlayer->color;
-    players.push_back(move(pHumanPlayer));
-    
-    auto aiSprite = Sprite::create("Player/player_blue.png");
-    aiSprite->setPosition(board.at(7, 7).sprite->getPosition());
-    aiSprite->setScale(board.at(7, 7).sprite->getScale());
-    aiSprite->setRotation(45);
-    this->addChild(aiSprite, 2);
-    
-    auto aiPlayer = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(Vec2(7, 7), PPColor::Blue, *this, aiSprite));
-    aiPlayer->setDirection(PPDirection::Down);
-    
-    board.at(7, 7).color = aiPlayer->color;
-    players.push_back(move(aiPlayer));
+    PPGameManager::getInstance().setScene(this);
+    PPGameManager::getInstance().setBoard(&board);
+    PPGameManager::getInstance().setRole(PPGameManager::Server);
 
+    PPGameManager::getInstance().initHuman();
+    PPGameManager::getInstance().fillWithAi(3);
+
+    for (auto & player : PPGameManager::getInstance().getPlayers()) {
+        player->pSprite->setPosition(board.at(player->getPosition()).sprite->getPosition());
+        player->pSprite->setScale(board.at(player->getPosition()).sprite->getScale());
+        player->pSprite->setRotation(-(45 + 90));
+        board.at(player->getPosition()).color = player->color;
+        this->addChild(player->pSprite, 2);
+    }
+    
+    
     PPBonusManager::getInstance().surface = this;
 
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/checkpoint.wav");
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/arrow.wav");
     
-    pSprite = Sprite::createWithTexture(textures[PPColor::Red]);
+    auto pSprite = Sprite::createWithTexture(textures[PPColor::Red]);
     
     pSprite->setPosition(visibleSize.width / 4.0, visibleSize.height - 30);
     pSprite->setScaleY(60 / pSprite->getBoundingBox().size.height);
@@ -147,15 +117,17 @@ bool PogoPainter::init()
     pSprite->setScaleY(60 / pSprite->getBoundingBox().size.height);
     pSprite->setScaleX((visibleSize.width / 2) / pSprite->getContentSize().width);
     this->addChild(pSprite, 0, 200);
-
-    
-    auto factory = new TCPServerConnectionFactoryImpl<EchoConnection>();
-    SocketAddress sa(IPAddress(), 8080);
-    ServerSocket sock(sa);
-    auto srv = new TCPServer(factory, sock);
-    srv->start();
     
     return true;
+}
+
+Texture2D * PogoPainter::getPlayerTexture(PPPlayer::Color col)
+{
+    if (player_textures.find(col) != player_textures.end()) {
+        return player_textures[col];
+    }
+    CCLOG("Player texture not found!");
+    return NULL;
 }
 
 void PogoPainter::gameTick(float dt)
@@ -163,13 +135,17 @@ void PogoPainter::gameTick(float dt)
     static int ticks = 0;
     ++ticks;
 
-    PPBonusManager::getInstance().update(board, players);
-    for(auto& pl : players) {
+    PPGameManager::getInstance().update(ticks, dt);
+
+    auto active_players = PPGameManager::getInstance().getPlayers();
+
+    PPBonusManager::getInstance().update(board, active_players);
+    for (auto& pl : active_players) {
         auto& pBonus = board.at(pl->getPosition()).bonus;
         if(pBonus) {
 			pBonus->apply(*pl, board);
 
-			if (pl->color == PPColor::Red) {
+			if (dynamic_cast<PPHumanPlayer*>(pl)) {
 				if (dynamic_cast<PPCheckpoint*>(&*pBonus)) {
 					CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(
 						"Sounds/checkpoint.wav");
@@ -191,25 +167,28 @@ void PogoPainter::gameTick(float dt)
     
     int maxPoints = 0;
     
-    for(auto& pl : players) {
+    for (auto& pl : active_players) {
         auto dir = pl->getDirection();
         pl->autorotate();
-    
-        for (auto& other : players) {
+        
+        /*
+        for (auto& other : active_players) {
             if (other != pl && &pl->getNextDirectionCell() == &board.at(other->pos)) {
                 dir = PPDirection::None;
                 break;
             }
         }
-        
+        */        
         auto res = board.moveInDir(pl->getPosition(), dir);
         if (pl->getPosition() != res) {
             pl->pos = res;
             auto action = MoveTo::create(TICK_DELAY, board.at(pl->getPosition()).sprite->getPosition());
             pl->pSprite->runAction(action);
+            auto dest = pl->getPosition();
+            auto color = pl->color;
             
-            pl->pSprite->scheduleOnce([this, &pl](float dt) {
-                this->board.at(pl->getPosition()).color = pl->color;
+            pl->pSprite->scheduleOnce([this, dest, color](float dt) {
+                this->board.at(dest).color = color;
             }, TICK_DELAY / 2, "color");
         } else {
             //TODO: feedback on wall hit
@@ -232,7 +211,7 @@ void PogoPainter::gameTick(float dt)
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto coef = visibleSize.width / maxPoints;
     
-    for(auto& pl : players) {
+    for (auto& pl : active_players) {
         float size = (pl->points + 10) * coef;
         switch (pl->color) {
             case PPColor::Red:
