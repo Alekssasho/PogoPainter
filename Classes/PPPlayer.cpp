@@ -40,15 +40,46 @@ PPHumanPlayer::PPHumanPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sp
 
         float angle = Vec2::angle(diff, Vec2(1, 0));
         
-        if(angle <= M_PI_4)
+        float spriteRotateAngle = -45;
+        
+        if(angle <= M_PI_4) {
+            
             this->currentDirection = PPDirection::Right;
-        else if(angle <= M_PI_2 + M_PI_4)
+        } else if(angle <= M_PI_2 + M_PI_4) {
             this->currentDirection = diff.y > 0 ? PPDirection::Up : PPDirection::Down;
-        else
+            this->currentDirection == PPDirection::Up ? spriteRotateAngle -= 90 : spriteRotateAngle += 90;
+        } else {
             this->currentDirection = PPDirection::Left;
+            spriteRotateAngle += 180;
+        }
+        
+        this->autorotate();
     };
     
     scene.registerEventListener(eventListener);
+}
+
+void PPPlayer::autorotate()
+{
+    int spriteRotateAngle = -45;
+    switch (currentDirection) {
+        case Up:
+            spriteRotateAngle -= 90;
+            break;
+        case Down:
+            spriteRotateAngle += 90;
+            break;
+        case Left:
+            spriteRotateAngle += 180;
+            break;
+        default:
+            break;
+    }
+    
+    this->pSprite->stopActionByTag(15);
+    auto rotate = RotateTo::create(0.15f, spriteRotateAngle);
+    rotate->setTag(15);
+    this->pSprite->runAction(rotate);
 }
 
 PPDirection PPHumanPlayer::getDirection()

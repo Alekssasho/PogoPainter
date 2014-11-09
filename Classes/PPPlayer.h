@@ -39,6 +39,8 @@ public:
             default: return board.at(pos.x, pos.y);
         }
     }
+    
+    void autorotate();
 
     Vec2 pos;
     int points = 0;
