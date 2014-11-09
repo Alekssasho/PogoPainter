@@ -128,12 +128,25 @@ void PogoPainter::gameTick(float dt)
     for(auto& pl : players) {
         auto& pBonus = board.at(pl->getPosition()).bonus;
         if(pBonus) {
+            auto p = pl->points;
 			pBonus->apply(*pl, board);
 
 			if (pl->color == PPColor::Red) {
 				if (dynamic_cast<PPCheckpoint*>(&*pBonus)) {
 					CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(
 						"Sounds/checkpoint.wav");
+                    
+                    auto label = Label::createWithTTF("+ " + to_string(pl->points - p), "fonts/Marker Felt.ttf", 50);
+                    label->setTextColor(Color4B::RED);
+                    label->setPosition(pl->pSprite->getPosition());
+                    label->runAction(Sequence::create(
+                                                      DelayTime::create(0.5f),
+                                                      MoveTo::create(1, Vec2(this->getChildByTag(100)->getPosition().x,
+                                                                             Director::getInstance()->getVisibleSize().height)),
+                                                      RemoveSelf::create(),
+                                                      NULL));
+                    this->addChild(label, 10);
+                    
 				}
 				else if (dynamic_cast<PPArrow*>(&*pBonus)) {
 					CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(
