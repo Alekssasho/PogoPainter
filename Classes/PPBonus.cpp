@@ -94,11 +94,11 @@ void PPArrow::apply(PPPlayer& player, PPBoard& board)
 
 void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer>> & players)
 {
-	static int step = 0;
-	if (step++ < steps_delay) {
+	static int step1 = 0;
+	if (step1++ < steps_delay) {
 		return;
 	}
-	step = 0;
+	step1 = 0;
 
 	auto get_pos = [this]() {
 		return Vec2(position_picker(generator), position_picker(generator));
@@ -143,8 +143,13 @@ void PPBonusManager::update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer
 			checkpoints.back()->sprite->runAction(ScaleTo::create(0.20f, targetScale));
 			surface->addChild(checkpoints.back()->sprite);
 		}
+	}
+
+	static int step2 = 0;
+	if (step2++ < steps_delay) {
 		return;
 	}
+	step2 = 0;
 
 	if (max_bonuses > bonuses.size()) {
 		auto pos = get_pos();
