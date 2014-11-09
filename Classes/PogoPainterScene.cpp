@@ -137,7 +137,6 @@ void PogoPainter::gameTick(float dt)
 	}
 	static_cast<Label*>(this->getChildByTag(42))->setString("Timer: " + to_string((timer - ticks)/2));
 
-
 	if (timer == ticks) {
 		this->unscheduleAllSelectors();		
 		this->unscheduleUpdate();
@@ -183,7 +182,6 @@ void PogoPainter::gameTick(float dt)
             this->removeChild(pBonus->sprite);
             PPBonusManager::getInstance().removeBonus(&*pBonus);
             board.at(pl->getPosition()).bonus.reset();
-
         }
         
         board.at(pl->getPosition()).color = pl->color;
@@ -195,14 +193,14 @@ void PogoPainter::gameTick(float dt)
         auto dir = pl->getDirection();
         pl->autorotate();
         
-        /*
+        //TODO: Maybe remove this code from here and place it in game-manager
         for (auto& other : active_players) {
             if (other != pl && &pl->getNextDirectionCell() == &board.at(other->pos)) {
                 dir = PPDirection::None;
                 break;
             }
         }
-        */        
+        
         auto res = board.moveInDir(pl->getPosition(), dir);
         if (pl->getPosition() != res) {
             pl->pos = res;
