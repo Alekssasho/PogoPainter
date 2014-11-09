@@ -54,7 +54,7 @@ bool PogoPainter::init()
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
     
-	timer = 24;
+	timer = 90;
 
     textures[PPColor::Blue]   = Director::getInstance()->getTextureCache()->addImage("Cell/cell_blue.png");
     textures[PPColor::Red]    = Director::getInstance()->getTextureCache()->addImage("Cell/cell_red.png");
