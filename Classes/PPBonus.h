@@ -106,7 +106,7 @@ public:
 
     void each(std::function<void(PPBonus*)> fn);
 
-    void update(PPBoard& board, std::vector<std::unique_ptr<PPPlayer>> & players);
+    void update(PPBoard& board, std::vector<PPPlayer*> & players);
 };
 
 

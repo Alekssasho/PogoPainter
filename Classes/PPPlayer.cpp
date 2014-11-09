@@ -14,13 +14,18 @@ using namespace cocos2d;
 
 PPPlayer::PPPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pS)
 : pos(pos), color(c), board(scene.getBoard()), pSprite(pS)
-{}
+{
+    if (pos == Vec2(0, 0)) {
+        currentDirection = PPDirection::Up;
+    } else if (pos == Vec2(7, 0)) {
+        currentDirection = PPDirection::Left;
+    } else if (pos == Vec2(0, 7)) {
+        currentDirection = PPDirection::Right;
+    } else {
+        currentDirection = PPDirection::Down;
+    }
+}
 
-//
-//
-//
-//
-//
 PPHumanPlayer::PPHumanPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pS)
 : PPPlayer(pos, c, scene, pS)
 {
@@ -94,11 +99,6 @@ PPStupidAiPlayer::PPStupidAiPlayer(const Vec2 & pos, PPColor c, PogoPainter& sce
     
 }
 
-//
-//
-//
-//
-//
 PPDirection PPStupidAiPlayer::getDirection()
 {
     

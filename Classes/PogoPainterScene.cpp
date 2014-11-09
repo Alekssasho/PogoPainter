@@ -3,6 +3,7 @@
 #include "SimpleAudioEngine.h"  
 
 #include "PogoPainterResultScene.h"
+#include "PPGameManager.h"
 
 USING_NS_CC;
 
@@ -62,6 +63,11 @@ bool PogoPainter::init()
     textures[PPColor::Green]  = Director::getInstance()->getTextureCache()->addImage("Cell/cell_green.png");
     textures[PPColor::Empty]  = Director::getInstance()->getTextureCache()->addImage("Cell/cell_empty.png");
     
+    player_textures[PPPlayer::Color::R] = Director::getInstance()->getTextureCache()->addImage("Player/player_red.png");
+    player_textures[PPPlayer::Color::G] = Director::getInstance()->getTextureCache()->addImage("Player/player_green.png");
+    player_textures[PPPlayer::Color::B] = Director::getInstance()->getTextureCache()->addImage("Player/player_blue.png");
+    player_textures[PPPlayer::Color::Y] = Director::getInstance()->getTextureCache()->addImage("Player/player_yellow.png");
+
     Vec2 offset(4, 4 - 60);
     auto cellSize = (visibleSize.width - offset.x) / 8;
     
@@ -80,12 +86,19 @@ bool PogoPainter::init()
             this->addChild(pSprite);
         }
     }
+    
+    PPGameManager::getInstance().setScene(this);
+    PPGameManager::getInstance().setBoard(&board);
+    PPGameManager::getInstance().setRole(PPGameManager::Server);
 
-    attachPlayer(PPColor::Red);
-    attachPlayer(PPColor::Blue);
-    attachPlayer(PPColor::Green);
-    attachPlayer(PPColor::Yellow);
-   
+    PPGameManager::getInstance().initHuman();
+    PPGameManager::getInstance().fillWithAi(3);
+
+    for (auto & player : PPGameManager::getInstance().getPlayers()) {
+        attachPlayer(player);
+    }
+    
+    
     PPBonusManager::getInstance().surface = this;
 
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/checkpoint.wav");
@@ -100,8 +113,17 @@ bool PogoPainter::init()
 
 	// add the label as a child to this layer
 	this->addChild(label, 1);
-
+    
     return true;
+}
+
+Texture2D * PogoPainter::getPlayerTexture(PPPlayer::Color col)
+{
+    if (player_textures.find(col) != player_textures.end()) {
+        return player_textures[col];
+    }
+    CCLOG("Player texture not found!");
+    return NULL;
 }
 
 void PogoPainter::gameTick(float dt)
@@ -124,14 +146,18 @@ void PogoPainter::gameTick(float dt)
 
     ++ticks;
 
-    PPBonusManager::getInstance().update(board, players);
-    for(auto& pl : players) {
+    PPGameManager::getInstance().update(ticks, dt);
+
+    auto active_players = PPGameManager::getInstance().getPlayers();
+
+    PPBonusManager::getInstance().update(board, active_players);
+    for (auto& pl : active_players) {
         auto& pBonus = board.at(pl->getPosition()).bonus;
         if(pBonus) {
             auto p = pl->points;
 			pBonus->apply(*pl, board);
 
-			if (pl->color == PPColor::Red) {
+			if (dynamic_cast<PPHumanPlayer*>(pl)) {
 				if (dynamic_cast<PPCheckpoint*>(&*pBonus)) {
 					CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(
 						"Sounds/checkpoint.wav");
@@ -165,25 +191,28 @@ void PogoPainter::gameTick(float dt)
     
     int maxPoints = 0;
     
-    for(auto& pl : players) {
+    for (auto& pl : active_players) {
         auto dir = pl->getDirection();
         pl->autorotate();
-    
-        for (auto& other : players) {
+        
+        /*
+        for (auto& other : active_players) {
             if (other != pl && &pl->getNextDirectionCell() == &board.at(other->pos)) {
                 dir = PPDirection::None;
                 break;
             }
         }
-        
+        */        
         auto res = board.moveInDir(pl->getPosition(), dir);
         if (pl->getPosition() != res) {
             pl->pos = res;
             auto action = MoveTo::create(TICK_DELAY, board.at(pl->getPosition()).sprite->getPosition());
             pl->pSprite->runAction(action);
+            auto dest = pl->getPosition();
+            auto color = pl->color;
             
-            pl->pSprite->scheduleOnce([this, &pl](float dt) {
-                this->board.at(pl->getPosition()).color = pl->color;
+            pl->pSprite->scheduleOnce([this, dest, color](float dt) {
+                this->board.at(dest).color = color;
             }, TICK_DELAY / 2, "color");
         } else {
             //TODO: feedback on wall hit
@@ -207,7 +236,7 @@ void PogoPainter::gameTick(float dt)
     auto coef = visibleSize.width / maxPoints;
     
     float sizeTillNow = 0;
-    for(auto& pl : players) {
+    for (auto& pl : active_players) {
         float size = (pl->points + 10) * coef;
         
         auto pSprite = static_cast<Sprite*>(this->getChildByTag(100 + static_cast<int>(pl->color) * 100));
@@ -231,25 +260,16 @@ void PogoPainter::update(float dt)
     }
 }
 
-void PogoPainter::attachPlayer(PPColor color)
+void PogoPainter::attachPlayer(PPPlayer* player)
 {
-    Vec2 pos;
     int rotation;
-    Sprite* pSprite;
-    unique_ptr<PPPlayer> player;
-    
-    switch (color) {
+    switch (player->color) {
         case PPColor::Red:
         {
-            pos = Vec2(0, 0);
             rotation = - (45 + 90);
-            pSprite = Sprite::create("Player/player_red.png");
-            player = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(pos, color, *this, pSprite));
-            player->setDirection(PPDirection::Up);
-            
             
             auto visibleSize = Director::getInstance()->getVisibleSize();
-            Sprite* pS = Sprite::createWithTexture(textures[color]);
+            Sprite* pS = Sprite::createWithTexture(textures[player->color]);
             
             pS->setPosition(visibleSize.width / 8.0, visibleSize.height - 30);
             pS->setScaleY(60 / pS->getBoundingBox().size.height);
@@ -260,15 +280,10 @@ void PogoPainter::attachPlayer(PPColor color)
         }
         case PPColor::Blue:
         {
-            pos = Vec2(7, 7);
             rotation = 45;
-            pSprite = Sprite::create("Player/player_blue.png");
-            player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
-            player->setDirection(PPDirection::Down);
-            
             
             auto visibleSize = Director::getInstance()->getVisibleSize();
-            Sprite* pS = Sprite::createWithTexture(textures[color]);
+            Sprite* pS = Sprite::createWithTexture(textures[player->color]);
             
             pS->setPosition((visibleSize.width / 8.0) * 3, visibleSize.height - 30);
             pS->setScaleY(60 / pS->getBoundingBox().size.height);
@@ -278,14 +293,10 @@ void PogoPainter::attachPlayer(PPColor color)
         }
         case PPColor::Green:
         {
-            pos = Vec2(0, 7);
             rotation = -45;
-            pSprite = Sprite::create("Player/player_green.png");
-            player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
-            player->setDirection(PPDirection::Right);
             
             auto visibleSize = Director::getInstance()->getVisibleSize();
-            Sprite* pS = Sprite::createWithTexture(textures[color]);
+            Sprite* pS = Sprite::createWithTexture(textures[player->color]);
             
             pS->setPosition((visibleSize.width / 8.0) * 5, visibleSize.height - 30);
             pS->setScaleY(60 / pS->getBoundingBox().size.height);
@@ -295,14 +306,10 @@ void PogoPainter::attachPlayer(PPColor color)
         }
         case PPColor::Yellow:
         {
-            pos = Vec2(7, 0);
             rotation = -45 + 180;
-            pSprite = Sprite::create("Player/player_yellow.png");
-            player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
-            player->setDirection(PPDirection::Left);
             
             auto visibleSize = Director::getInstance()->getVisibleSize();
-            Sprite* pS = Sprite::createWithTexture(textures[color]);
+            Sprite* pS = Sprite::createWithTexture(textures[player->color]);
             
             pS->setPosition((visibleSize.width / 8.0) * 7, visibleSize.height - 30);
             pS->setScaleY(60 / pS->getBoundingBox().size.height);
@@ -315,13 +322,13 @@ void PogoPainter::attachPlayer(PPColor color)
             break;
     }
     
-    pSprite->setPosition(board.at(pos).sprite->getPosition());
-    pSprite->setScale(board.at(pos).sprite->getScale());
-    pSprite->setRotation(rotation);
-    this->addChild(pSprite, 2);
+    auto pos = player->getPosition();
+    player->pSprite->setPosition(board.at(pos).sprite->getPosition());
+    player->pSprite->setScale(board.at(pos).sprite->getScale());
+    player->pSprite->setRotation(rotation);
+    this->addChild(player->pSprite, 2);
     
     board.at(pos).color = player->color;
-    players.push_back(move(player));
 }
 
 void PogoPainter::registerEventListener(EventListener* listener)

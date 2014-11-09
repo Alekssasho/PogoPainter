@@ -12,6 +12,9 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
+		2C41A1471A0FA87B00064B7F /* libPocoFoundationd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C41A1451A0FA87B00064B7F /* libPocoFoundationd.a */; };
+		2C41A1481A0FA87B00064B7F /* libPocoNetd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C41A1461A0FA87B00064B7F /* libPocoNetd.a */; };
+		2C41A14B1A0FA8AC00064B7F /* PPGameManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C41A1491A0FA8AC00064B7F /* PPGameManager.cpp */; };
 		2CB69F791A0D8E1C00E2B018 /* PPBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB69F771A0D8E1C00E2B018 /* PPBoard.cpp */; };
 		2CB69F7C1A0D918700E2B018 /* PPBonus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB69F7A1A0D918700E2B018 /* PPBonus.cpp */; };
 		2CB69F811A0D9ADC00E2B018 /* Bonuses in Resources */ = {isa = PBXBuildFile; fileRef = 2CB69F7D1A0D9ADC00E2B018 /* Bonuses */; };
@@ -116,6 +119,10 @@
 		1D6058910D05DD3D006BFB54 /* PogoPainter iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PogoPainter iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DF5F4DF0D08C38300B7A737 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		288765A40DF7441C002DB57D /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		2C41A1451A0FA87B00064B7F /* libPocoFoundationd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoFoundationd.a; path = "../../../../Downloads/poco-1.4.7/lib/iPhoneSimulator/x86_64/libPocoFoundationd.a"; sourceTree = "<group>"; };
+		2C41A1461A0FA87B00064B7F /* libPocoNetd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoNetd.a; path = "../../../../Downloads/poco-1.4.7/lib/iPhoneSimulator/x86_64/libPocoNetd.a"; sourceTree = "<group>"; };
+		2C41A1491A0FA8AC00064B7F /* PPGameManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PPGameManager.cpp; sourceTree = "<group>"; };
+		2C41A14A1A0FA8AC00064B7F /* PPGameManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPGameManager.h; sourceTree = "<group>"; };
 		2CB69F771A0D8E1C00E2B018 /* PPBoard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PPBoard.cpp; sourceTree = "<group>"; };
 		2CB69F781A0D8E1C00E2B018 /* PPBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPBoard.h; sourceTree = "<group>"; };
 		2CB69F7A1A0D918700E2B018 /* PPBonus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PPBonus.cpp; sourceTree = "<group>"; };
@@ -188,6 +195,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C41A1471A0FA87B00064B7F /* libPocoFoundationd.a in Frameworks */,
+				2C41A1481A0FA87B00064B7F /* libPocoNetd.a in Frameworks */,
 				1AC6FB30180E99EB004C840B /* libcocos2d iOS.a in Frameworks */,
 				D6B0611B1803AB670077942B /* CoreMotion.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
@@ -273,6 +282,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2C41A1451A0FA87B00064B7F /* libPocoFoundationd.a */,
+				2C41A1461A0FA87B00064B7F /* libPocoNetd.a */,
 				D6B0611A1803AB670077942B /* CoreMotion.framework */,
 				503AE11A17EB9C5A00D1A890 /* IOKit.framework */,
 				503AE11117EB99EE00D1A890 /* libcurl.dylib */,
@@ -313,6 +324,8 @@
 		46880B8319C43A87006E1F66 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				2C41A1491A0FA8AC00064B7F /* PPGameManager.cpp */,
+				2C41A14A1A0FA8AC00064B7F /* PPGameManager.h */,
 				46880B8419C43A87006E1F66 /* AppDelegate.cpp */,
 				46880B8519C43A87006E1F66 /* AppDelegate.h */,
 				F500FF0C1A0E2CE30051EF51 /* PogoPainterMenuScene.cpp */,
@@ -539,6 +552,7 @@
 				2CB69F791A0D8E1C00E2B018 /* PPBoard.cpp in Sources */,
 				503AE10117EB989F00D1A890 /* main.m in Sources */,
 				F5C4343D1A0EB71300EAED0A /* PogoPainterResultScene.cpp in Sources */,
+				2C41A14B1A0FA8AC00064B7F /* PPGameManager.cpp in Sources */,
 				F500FF0E1A0E2CE30051EF51 /* PogoPainterMenuScene.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -590,10 +604,12 @@
 					"$(inherited)",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios/Simulation",
+					"/Users/aleksandar/Downloads/poco-1.4.7/Net/include",
+					"/Users/aleksandar/Downloads/poco-1.4.7/Foundation/include",
 				);
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "/Users/aleksandar/Downloads/poco-1.4.7/lib/iPhoneSimulator/x86_64";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
@@ -620,10 +636,12 @@
 					"$(inherited)",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios/Simulation",
+					"/Users/aleksandar/Downloads/poco-1.4.7/Net/include",
+					"/Users/aleksandar/Downloads/poco-1.4.7/Foundation/include",
 				);
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "/Users/aleksandar/Downloads/poco-1.4.7/lib/iPhoneSimulator/x86_64";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = "";
