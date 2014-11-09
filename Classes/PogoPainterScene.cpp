@@ -85,26 +85,12 @@ bool PogoPainter::init()
     attachPlayer(PPColor::Blue);
     attachPlayer(PPColor::Green);
     attachPlayer(PPColor::Yellow);
-    
    
     PPBonusManager::getInstance().surface = this;
 
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/checkpoint.wav");
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/arrow.wav");
     
-    Sprite* pSprite = Sprite::createWithTexture(textures[PPColor::Red]);
-    
-    pSprite->setPosition(visibleSize.width / 4.0, visibleSize.height - 30);
-    pSprite->setScaleY(60 / pSprite->getBoundingBox().size.height);
-    pSprite->setScaleX((visibleSize.width / 2) / pSprite->getContentSize().width);
-    this->addChild(pSprite, 0, 100);
-    pSprite = Sprite::createWithTexture(textures[PPColor::Blue]);
-    pSprite->setPosition((visibleSize.width / 4.0) * 3, visibleSize.height - 30);
-    pSprite->setScaleY(60 / pSprite->getBoundingBox().size.height);
-    pSprite->setScaleX((visibleSize.width / 2) / pSprite->getContentSize().width);
-    this->addChild(pSprite, 0, 200);
-    
-
 	auto label = Label::createWithTTF("Timer: " + to_string(timer/2), "fonts/Marker Felt.ttf", 30);
 	label->setTag(42);
 
@@ -135,7 +121,6 @@ void PogoPainter::gameTick(float dt)
 		this->unscheduleUpdate();
 		//TODO: asene call game over sreen here
 	}
-		
 
     ++ticks;
 
@@ -208,27 +193,15 @@ void PogoPainter::gameTick(float dt)
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto coef = visibleSize.width / maxPoints;
     
+    float sizeTillNow = 0;
     for(auto& pl : players) {
         float size = (pl->points + 10) * coef;
-        switch (pl->color) {
-            case PPColor::Red:
-            {
-                auto pSprite = static_cast<Sprite*>(this->getChildByTag(100));
-                pSprite->setPosition(Vec2(size / 2.0, visibleSize.height - 30));
-                auto s = pSprite->getBoundingBox();
-                pSprite->setScaleX(size / pSprite->getContentSize().width);
-                break;
-            }
-            case PPColor::Blue:
-            {
-                auto pSprite = static_cast<Sprite*>(this->getChildByTag(200));
-                pSprite->setPosition(Vec2(visibleSize.width - size / 2.0, visibleSize.height - 30));
-                pSprite->setScaleX(size / pSprite->getContentSize().width);
-                break;
-            }
-            default:
-                break;
-        }
+        
+        auto pSprite = static_cast<Sprite*>(this->getChildByTag(100 + static_cast<int>(pl->color) * 100));
+        pSprite->setPosition(Vec2(sizeTillNow + size / 2.0, visibleSize.height - 30));
+        pSprite->setScaleX(size / pSprite->getContentSize().width);
+        
+        sizeTillNow += pSprite->getBoundingBox().size.width;
     }
 }
 
@@ -254,33 +227,77 @@ void PogoPainter::attachPlayer(PPColor color)
     
     switch (color) {
         case PPColor::Red:
+        {
             pos = Vec2(0, 0);
             rotation = - (45 + 90);
             pSprite = Sprite::create("Player/player_red.png");
             player = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(pos, color, *this, pSprite));
             player->setDirection(PPDirection::Up);
+            
+            
+            auto visibleSize = Director::getInstance()->getVisibleSize();
+            Sprite* pS = Sprite::createWithTexture(textures[color]);
+            
+            pS->setPosition(visibleSize.width / 8.0, visibleSize.height - 30);
+            pS->setScaleY(60 / pS->getBoundingBox().size.height);
+            pS->setScaleX((visibleSize.width / 4) / pS->getContentSize().width);
+            this->addChild(pS, 0, 100);
+            
             break;
+        }
         case PPColor::Blue:
+        {
             pos = Vec2(7, 7);
             rotation = 45;
             pSprite = Sprite::create("Player/player_blue.png");
             player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
             player->setDirection(PPDirection::Down);
+            
+            
+            auto visibleSize = Director::getInstance()->getVisibleSize();
+            Sprite* pS = Sprite::createWithTexture(textures[color]);
+            
+            pS->setPosition((visibleSize.width / 8.0) * 3, visibleSize.height - 30);
+            pS->setScaleY(60 / pS->getBoundingBox().size.height);
+            pS->setScaleX((visibleSize.width / 4) / pS->getContentSize().width);
+            this->addChild(pS, 0, 200);
             break;
+        }
         case PPColor::Green:
+        {
             pos = Vec2(0, 7);
             rotation = -45;
             pSprite = Sprite::create("Player/player_green.png");
             player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
             player->setDirection(PPDirection::Right);
+            
+            auto visibleSize = Director::getInstance()->getVisibleSize();
+            Sprite* pS = Sprite::createWithTexture(textures[color]);
+            
+            pS->setPosition((visibleSize.width / 8.0) * 5, visibleSize.height - 30);
+            pS->setScaleY(60 / pS->getBoundingBox().size.height);
+            pS->setScaleX((visibleSize.width / 4) / pS->getContentSize().width);
+            this->addChild(pS, 0, 300);
             break;
+        }
         case PPColor::Yellow:
+        {
             pos = Vec2(7, 0);
             rotation = -45 + 180;
             pSprite = Sprite::create("Player/player_yellow.png");
             player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
             player->setDirection(PPDirection::Left);
+            
+            auto visibleSize = Director::getInstance()->getVisibleSize();
+            Sprite* pS = Sprite::createWithTexture(textures[color]);
+            
+            pS->setPosition((visibleSize.width / 8.0) * 7, visibleSize.height - 30);
+            pS->setScaleY(60 / pS->getBoundingBox().size.height);
+            pS->setScaleX((visibleSize.width / 4) / pS->getContentSize().width);
+            this->addChild(pS, 0, 400);
+            
             break;
+        }
         default:
             break;
     }
