@@ -82,6 +82,7 @@ bool PogoPainter::init()
     auto pSprite = Sprite::create("Player/player_red.png");
     pSprite->setPosition(board.at(0, 0).sprite->getPosition());
     pSprite->setScale(board.at(0, 0).sprite->getScale());
+    pSprite->setRotation(-(45 + 90));
     this->addChild(pSprite, 2);
     
     auto pHumanPlayer = unique_ptr<PPHumanPlayer>(new PPHumanPlayer(Vec2::ZERO, PPColor::Red, *this, pSprite));
@@ -93,6 +94,7 @@ bool PogoPainter::init()
     auto aiSprite = Sprite::create("Player/player_blue.png");
     aiSprite->setPosition(board.at(7, 7).sprite->getPosition());
     aiSprite->setScale(board.at(7, 7).sprite->getScale());
+    aiSprite->setRotation(45);
     this->addChild(aiSprite, 2);
     
     auto aiPlayer = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(Vec2(7, 7), PPColor::Blue, *this, aiSprite));
@@ -156,6 +158,7 @@ void PogoPainter::gameTick(float dt)
     
     for(auto& pl : players) {
         auto dir = pl->getDirection();
+        pl->autorotate();
     
         for (auto& other : players) {
             if (other != pl && &pl->getNextDirectionCell() == &board.at(other->pos)) {

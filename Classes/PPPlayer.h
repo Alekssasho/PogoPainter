@@ -31,14 +31,10 @@ public:
     
     PPCell& getNextDirectionCell()
     {
-        switch (getDirection()) {
-            case Up: return board.at(pos.x, pos.y + 1);
-            case Down: return board.at(pos.x, pos.y - 1);
-            case Left: return board.at(pos.x - 1, pos.y);
-            case Right: return board.at(pos.x + 1, pos.y);
-            default: return board.at(pos.x, pos.y);
-        }
+        return board.at(board.moveInDir(pos, getDirection()));
     }
+    
+    void autorotate();
 
     Vec2 pos;
     int points = 0;

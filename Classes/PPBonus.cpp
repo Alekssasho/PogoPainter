@@ -9,15 +9,21 @@
 #include "PPBonus.h"
 #include "PPPlayer.h"
 
+
+
+
 void PPCheckpoint::apply(PPPlayer& player, PPBoard& board)
 {
 	board.each([&](PPCell & cell) {
 		if (cell.color == player.color) {
-			Blink* blink = Blink::create(0.5f, 3);
-			cell.sprite->runAction(blink);
+			auto action = Repeat::create(Sequence::create(
+				DelayTime::create(0.08f),
+				CallFunc::create([&]{ cell.color = player.color; }),
+				DelayTime::create(0.08f),
+				CallFunc::create([&]{ cell.color = PPColor::Empty; }), NULL), 2);
+			cell.sprite->runAction(action);
 			cell.color = PPColor::Empty;
 			++player.points;
-			//TODO: Animate points
 		}
 	});
 }
@@ -34,31 +40,51 @@ void PPArrow::update(PPBoard& board)
 
 void PPArrow::apply(PPPlayer& player, PPBoard& board)
 {
-	Blink* blink = Blink::create(1.0f, 5);
 	switch (dir)
 	{
 	case Left:
 		for (int c = player.getPosition().x; c >= 0; --c){
-			board.at(c, player.getPosition().y).sprite->runAction(blink);
-			board.at(c, player.getPosition().y).color = player.color;
+			int y = player.getPosition().y;
+			board.at(c, player.getPosition().y).sprite->runAction(
+				Sequence::createWithTwoActions(
+				DelayTime::create(0.05f * (player.getPosition().x - c)),
+				CallFunc::create([&, y, c] {
+				board.at(c, y).color = player.color;
+			})));
 		}
 		break;
 	case Up:
 		for (int c = player.getPosition().y; c < PPBoardSize; ++c) {
-			board.at(c, player.getPosition().y).sprite->runAction(blink);
-			board.at(c, player.getPosition().y).color = player.color;
+			int x = player.getPosition().x;
+			board.at(player.getPosition().x, c).sprite->runAction(
+				Sequence::createWithTwoActions(
+				DelayTime::create(0.05f * (c - player.getPosition().y)),
+				CallFunc::create([&, x, c] {
+				board.at(x, c).color = player.color;
+			})));
 		}
 		break;
 	case Right:
 		for (int c = player.getPosition().x; c < PPBoardSize; ++c) {
-			board.at(c, player.getPosition().y).sprite->runAction(blink);
-			board.at(c, player.getPosition().y).color = player.color;
+			int y = player.getPosition().y;
+			board.at(c, player.getPosition().y).sprite->runAction(
+				Sequence::createWithTwoActions(
+				DelayTime::create(0.05f * (c - player.getPosition().x)),
+				CallFunc::create([&, y, c] {
+				board.at(c, y).color = player.color;
+			})));
 		}
 		break;
 	case Down:
 		for (int c = player.getPosition().y; c >= 0; --c) {
-			board.at(player.getPosition().x, c).sprite->runAction(blink);
-			board.at(player.getPosition().x, c).color = player.color;
+			int x = player.getPosition().x;
+			board.at(player.getPosition().x, c).sprite->runAction(
+				Sequence::createWithTwoActions(
+				DelayTime::create(0.05f * (player.getPosition().y - c)),
+				CallFunc::create([&, x, c] {
+				board.at(x, c).color = player.color;
+			})));
+
 		}
 		break;
 	default:
@@ -173,3 +199,4 @@ void PPBonusManager::removeBonus(PPBonus * bonus)
 		}
 	}
 }
+    
