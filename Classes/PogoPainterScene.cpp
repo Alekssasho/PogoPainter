@@ -90,6 +90,7 @@ bool PogoPainter::init()
 
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/checkpoint.wav");
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/arrow.wav");
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->preloadEffect("Sounds/speed.wav");
 
 	auto label = Label::createWithTTF("Timer: " + to_string(timer / 2), "fonts/Marker Felt.ttf", 30);
 	label->setTag(42);
@@ -121,8 +122,6 @@ void PogoPainter::gameTick(float dt)
 	if (ticks % 2 == 0){
 		if ((timer - ticks) / 2 <= 10 )
 			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sounds/beep-08.wav");
-		/*else if ((timer - ticks) / 2 <= 5 && (timer - ticks) / 2 > 0)
-			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("Sounds/beep-06.wav");*/
 	}
 	static_cast<Label*>(this->getChildByTag(42))->setString("Timer: " + to_string((timer - ticks) / 2));
 
@@ -174,6 +173,10 @@ void PogoPainter::gameTick(float dt)
 				else if (dynamic_cast<PPArrow*>(&*pBonus)) {
 					CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(
 						"Sounds/arrow.wav");
+				}
+				else if (dynamic_cast<PPSpeed*>(&*pBonus)) {
+					CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(
+						"Sounds/speed.wav");
 				}
 			}
 
