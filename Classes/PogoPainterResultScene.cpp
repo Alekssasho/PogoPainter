@@ -113,7 +113,8 @@ void PogoPainterResults::setResults(vector<int> res)
     
     auto eventListener = EventListenerTouchOneByOne::create();
     eventListener->onTouchBegan = [](Touch* t, Event* e) {
-        
+
+        PPBonusManager::getInstance().clear();
         Director::getInstance()->replaceScene(PogoPainter::createScene());
         return true;
     };
