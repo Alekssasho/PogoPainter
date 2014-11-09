@@ -65,7 +65,7 @@ public:
     PPStupidAiPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite);
     
     PPDirection getDirection() override;
-private:
+protected:
     PPBonus* following = nullptr;
     
     double calcDistanceFromPlayerTo(int x, int y) const;
@@ -74,5 +74,19 @@ private:
     PPCheckpoint* getNearestCheckpoint(std::vector<PPCheckpoint*> checkpoints);
     PPDirection getNextDirection();
 };
+
+class PPLessStupidAiPlayer : public PPStupidAiPlayer
+{
+public:
+
+    bool go_for_arrow = true;
+    PPLessStupidAiPlayer(const Vec2 & pos, PPColor c, PogoPainter& scene, Sprite* pSprite)
+        : PPStupidAiPlayer(pos, c, scene, pSprite)
+    {}
+
+    PPDirection getDirection() override;
+private:
+};
+
 
 #endif /* defined(__PogoPainter__PPPlayer__) */

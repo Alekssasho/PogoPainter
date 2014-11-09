@@ -195,3 +195,18 @@ PPDirection PPStupidAiPlayer::getNextDirection()
     }
     return currentDirection;
 }
+
+
+PPDirection PPLessStupidAiPlayer::getDirection()
+{
+    vector<PPCheckpoint*> checkpoints = PPBonusManager::getInstance().getCheckpoints();
+    vector<PPBonus*> bonuses = PPBonusManager::getInstance().getBonuses();
+
+    if (go_for_arrow) {
+        following = bonuses.size() == 0 ? nullptr : this->getNearestBonus(PPBonusManager::getInstance().getBonuses());
+    } else {
+        following = checkpoints.size() == 0 ? nullptr : this->getNearestCheckpoint(PPBonusManager::getInstance().getCheckpoints());
+    }
+
+    return getNextDirection();
+}

@@ -151,6 +151,15 @@ void PogoPainter::gameTick(float dt)
         auto& pBonus = board.at(pl->getPosition()).bonus;
         if(pBonus) {
             auto p = pl->points;
+            PPLessStupidAiPlayer * stupid_pl;
+            if (stupid_pl = dynamic_cast<PPLessStupidAiPlayer*>(&*pl)) {
+                if (!dynamic_cast<PPCheckpoint*>(&*pBonus)) {
+                    stupid_pl->go_for_arrow = false;
+                } else {
+                    stupid_pl->go_for_arrow = true;
+                }
+            }
+            
 			pBonus->apply(*pl, board);
 
 			if (pl->color == PPColor::Red) {
@@ -309,7 +318,7 @@ void PogoPainter::attachPlayer(PPColor color)
 						  pos = Vec2(7, 7);
 						  rotation = 45;
 						  pSprite = Sprite::create("Player/player_blue.png");
-						  player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
+                          player = unique_ptr<PPLessStupidAiPlayer>(new PPLessStupidAiPlayer(pos, color, *this, pSprite));
 						  player->setDirection(PPDirection::Down);
 
 
@@ -344,7 +353,7 @@ void PogoPainter::attachPlayer(PPColor color)
 							pos = Vec2(7, 0);
 							rotation = -45 + 180;
 							pSprite = Sprite::create("Player/player_yellow.png");
-							player = unique_ptr<PPStupidAiPlayer>(new PPStupidAiPlayer(pos, color, *this, pSprite));
+                            player = unique_ptr<PPLessStupidAiPlayer>(new PPLessStupidAiPlayer(pos, color, *this, pSprite));
 							player->setDirection(PPDirection::Left);
 
 							auto visibleSize = Director::getInstance()->getVisibleSize();
