@@ -54,6 +54,8 @@ bool PogoPainter::init()
     menu->setPosition(Vec2::ZERO);
     this->addChild(menu, 1);
     
+	timer = 90;
+
     textures[PPColor::Blue]   = Director::getInstance()->getTextureCache()->addImage("Cell/cell_blue.png");
     textures[PPColor::Red]    = Director::getInstance()->getTextureCache()->addImage("Cell/cell_red.png");
     textures[PPColor::Yellow] = Director::getInstance()->getTextureCache()->addImage("Cell/cell_yellow.png");
@@ -120,12 +122,34 @@ bool PogoPainter::init()
     pSprite->setScaleX((visibleSize.width / 2) / pSprite->getContentSize().width);
     this->addChild(pSprite, 0, 200);
     
+
+	auto label = Label::createWithTTF("Timer: " + to_string(timer/2), "fonts/Marker Felt.ttf", 30);
+	label->setTag(42);
+
+	// position the label on the center of the screen
+	label->setPosition(Vec2(visibleSize.width / 2,
+		(visibleSize.height - 8 * cellSize - 8)/2.0));
+
+	// add the label as a child to this layer
+	this->addChild(label, 1);
+
     return true;
 }
 
 void PogoPainter::gameTick(float dt)
-{
+{	
     static int ticks = 0;
+
+	static_cast<Label*>(this->getChildByTag(42))->setString("Timer: " + to_string((timer - ticks)/2));
+
+
+	if (timer == ticks) {
+		this->unscheduleAllSelectors();		
+		this->unscheduleUpdate();
+		//TODO: asene call game over sreen here
+	}
+		
+
     ++ticks;
 
     PPBonusManager::getInstance().update(board, players);

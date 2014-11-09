@@ -20,6 +20,7 @@ private:
     PPBoard board;
     vector<unique_ptr<PPPlayer>> players;
     map<PPColor, Texture2D*> textures;
+	int timer;
 public:
     // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static Scene* createScene();
