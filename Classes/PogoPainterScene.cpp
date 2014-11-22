@@ -4,6 +4,12 @@
 
 #include "PogoPainterResultScene.h"
 
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
 USING_NS_CC;
 
 Scene* PogoPainter::createScene()
@@ -112,6 +118,34 @@ bool PogoPainter::init()
     indicator->setOpacity(175);
     indicator->setPosition(indicator->getPosition() - Vec2(0, cellSize - 24));
     this->addChild(indicator);
+    
+    
+    
+    
+    int sockd;
+    struct sockaddr_in my_name;
+    
+    sockd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    
+    if(!sockd) {
+        MessageBox("Socket not created", "Error");
+    }
+    
+    memset(&my_name, 0, sizeof(my_name));
+    my_name.sin_family = AF_INET;
+    my_name.sin_port = htons(3333);
+    inet_pton(AF_INET, "192.168.1.166", &my_name.sin_addr);
+    
+    connect(sockd, (struct sockaddr*)&my_name, sizeof(my_name));
+
+//    write(sockd, "\nAndroid\n", 5);
+    send(sockd, "\nAndroid", 9, 0);
+//
+    char buff[10];
+    auto num = read(sockd, buff, 10);
+    MessageBox(std::string(buff, buff + num).c_str(), "Cool");
+//    log("%s", std::string(buff, buff + num).c_str());
+    close(sockd);
 
 	return true;
 }
