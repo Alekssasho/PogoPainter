@@ -43,17 +43,23 @@ endif()
 
 set(GAME_SRC
   Classes/AppDelegate.cpp
+  Classes/PogoPainterMenuScene.cpp
+  Classes/PogoPainterResultScene.cpp
   Classes/PogoPainterScene.cpp
   Classes/PPBoard.cpp
   Classes/PPBonus.cpp
+  Classes/PPPlayer.cpp
 )
 
 set(GAME_HEADERS
   Classes/AppDelegate.h
+  Classes/PogoPainterMenuScene.h
+  Classes/PogoPainterResultScene.h
   Classes/PogoPainterScene.h
   Classes/PPBoard.h
   Classes/PPBonus.h
-     )
+  Classes/PPPlayer.h
+)
 
 if( APPLE AND IOS )
 include_directories(Classes)

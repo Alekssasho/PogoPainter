@@ -1,3 +1,5 @@
+linux-build/
+
 bin/
 cocos2d/
 proj.ios_mac/build/
