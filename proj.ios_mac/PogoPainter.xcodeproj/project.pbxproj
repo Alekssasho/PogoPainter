@@ -12,9 +12,9 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
-		2C41A1471A0FA87B00064B7F /* libPocoFoundationd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C41A1451A0FA87B00064B7F /* libPocoFoundationd.a */; };
 		2C41A1481A0FA87B00064B7F /* libPocoNetd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C41A1461A0FA87B00064B7F /* libPocoNetd.a */; };
 		2C41A14B1A0FA8AC00064B7F /* PPGameManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C41A1491A0FA8AC00064B7F /* PPGameManager.cpp */; };
+		2C78D0BB1A20D4F100891BA3 /* libPocoFoundationd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C78D0BA1A20D4F100891BA3 /* libPocoFoundationd.a */; };
 		2CB69F791A0D8E1C00E2B018 /* PPBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB69F771A0D8E1C00E2B018 /* PPBoard.cpp */; };
 		2CB69F7C1A0D918700E2B018 /* PPBonus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB69F7A1A0D918700E2B018 /* PPBonus.cpp */; };
 		2CB69F811A0D9ADC00E2B018 /* Bonuses in Resources */ = {isa = PBXBuildFile; fileRef = 2CB69F7D1A0D9ADC00E2B018 /* Bonuses */; };
@@ -123,6 +123,79 @@
 		2C41A1461A0FA87B00064B7F /* libPocoNetd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoNetd.a; path = "../../../../Downloads/poco-1.4.7/lib/iPhoneSimulator/x86_64/libPocoNetd.a"; sourceTree = "<group>"; };
 		2C41A1491A0FA8AC00064B7F /* PPGameManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PPGameManager.cpp; sourceTree = "<group>"; };
 		2C41A14A1A0FA8AC00064B7F /* PPGameManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPGameManager.h; sourceTree = "<group>"; };
+		2C78D06E1A20D4D100891BA3 /* AIX */ = {isa = PBXFileReference; lastKnownFileType = text; path = AIX; sourceTree = "<group>"; };
+		2C78D06F1A20D4D100891BA3 /* Android */ = {isa = PBXFileReference; lastKnownFileType = text; path = Android; sourceTree = "<group>"; };
+		2C78D0701A20D4D200891BA3 /* Angstrom */ = {isa = PBXFileReference; lastKnownFileType = text; path = Angstrom; sourceTree = "<group>"; };
+		2C78D0711A20D4D200891BA3 /* ARM-Linux */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ARM-Linux"; sourceTree = "<group>"; };
+		2C78D0721A20D4D200891BA3 /* BeagleBoard */ = {isa = PBXFileReference; lastKnownFileType = text; path = BeagleBoard; sourceTree = "<group>"; };
+		2C78D0731A20D4D200891BA3 /* CEGCCARM */ = {isa = PBXFileReference; lastKnownFileType = text; path = CEGCCARM; sourceTree = "<group>"; };
+		2C78D0741A20D4D200891BA3 /* CygLinux */ = {isa = PBXFileReference; lastKnownFileType = text; path = CygLinux; sourceTree = "<group>"; };
+		2C78D0751A20D4D200891BA3 /* CYGWIN */ = {isa = PBXFileReference; lastKnownFileType = text; path = CYGWIN; sourceTree = "<group>"; };
+		2C78D0761A20D4D200891BA3 /* Darwin */ = {isa = PBXFileReference; lastKnownFileType = text; path = Darwin; sourceTree = "<group>"; };
+		2C78D0771A20D4D200891BA3 /* Darwin-clang */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Darwin-clang"; sourceTree = "<group>"; };
+		2C78D0781A20D4D200891BA3 /* Darwin-clang-libc++ */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Darwin-clang-libc++"; sourceTree = "<group>"; };
+		2C78D0791A20D4D200891BA3 /* Darwin-gcc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Darwin-gcc"; sourceTree = "<group>"; };
+		2C78D07A1A20D4D200891BA3 /* Darwin32 */ = {isa = PBXFileReference; lastKnownFileType = text; path = Darwin32; sourceTree = "<group>"; };
+		2C78D07B1A20D4D200891BA3 /* Darwin32-clang */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Darwin32-clang"; sourceTree = "<group>"; };
+		2C78D07C1A20D4D200891BA3 /* Darwin32-clang-libc++ */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Darwin32-clang-libc++"; sourceTree = "<group>"; };
+		2C78D07D1A20D4D200891BA3 /* Darwin32-gcc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Darwin32-gcc"; sourceTree = "<group>"; };
+		2C78D07E1A20D4D200891BA3 /* Darwin64 */ = {isa = PBXFileReference; lastKnownFileType = text; path = Darwin64; sourceTree = "<group>"; };
+		2C78D07F1A20D4D200891BA3 /* Darwin64-clang */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Darwin64-clang"; sourceTree = "<group>"; };
+		2C78D0801A20D4D200891BA3 /* Darwin64-clang-libc++ */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Darwin64-clang-libc++"; sourceTree = "<group>"; };
+		2C78D0811A20D4D200891BA3 /* Darwin64-gcc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Darwin64-gcc"; sourceTree = "<group>"; };
+		2C78D0821A20D4D200891BA3 /* DigiEL */ = {isa = PBXFileReference; lastKnownFileType = text; path = DigiEL; sourceTree = "<group>"; };
+		2C78D0831A20D4D200891BA3 /* ELDK */ = {isa = PBXFileReference; lastKnownFileType = text; path = ELDK; sourceTree = "<group>"; };
+		2C78D0841A20D4D200891BA3 /* FreeBSD */ = {isa = PBXFileReference; lastKnownFileType = text; path = FreeBSD; sourceTree = "<group>"; };
+		2C78D0851A20D4D200891BA3 /* GCCEMBEDLINUX */ = {isa = PBXFileReference; lastKnownFileType = text; path = GCCEMBEDLINUX; sourceTree = "<group>"; };
+		2C78D0861A20D4D200891BA3 /* HP-UX */ = {isa = PBXFileReference; lastKnownFileType = text; path = "HP-UX"; sourceTree = "<group>"; };
+		2C78D0871A20D4D200891BA3 /* iPhone */ = {isa = PBXFileReference; lastKnownFileType = text; path = iPhone; sourceTree = "<group>"; };
+		2C78D0881A20D4D200891BA3 /* iPhone-clang */ = {isa = PBXFileReference; lastKnownFileType = text; path = "iPhone-clang"; sourceTree = "<group>"; };
+		2C78D0891A20D4D200891BA3 /* iPhone-clang-libc++ */ = {isa = PBXFileReference; lastKnownFileType = text; path = "iPhone-clang-libc++"; sourceTree = "<group>"; };
+		2C78D08A1A20D4D200891BA3 /* iPhoneSimulator */ = {isa = PBXFileReference; lastKnownFileType = text; path = iPhoneSimulator; sourceTree = "<group>"; };
+		2C78D08B1A20D4D200891BA3 /* iPhoneSimulator-clang */ = {isa = PBXFileReference; lastKnownFileType = text; path = "iPhoneSimulator-clang"; sourceTree = "<group>"; };
+		2C78D08C1A20D4D200891BA3 /* iPhoneSimulator-clang-libc++ */ = {isa = PBXFileReference; lastKnownFileType = text; path = "iPhoneSimulator-clang-libc++"; sourceTree = "<group>"; };
+		2C78D08D1A20D4D200891BA3 /* Linux */ = {isa = PBXFileReference; lastKnownFileType = text; path = Linux; sourceTree = "<group>"; };
+		2C78D08E1A20D4D200891BA3 /* Linux-stlport */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Linux-stlport"; sourceTree = "<group>"; };
+		2C78D08F1A20D4D200891BA3 /* MinGW */ = {isa = PBXFileReference; lastKnownFileType = text; path = MinGW; sourceTree = "<group>"; };
+		2C78D0901A20D4D200891BA3 /* MinGW-CrossEnv */ = {isa = PBXFileReference; lastKnownFileType = text; path = "MinGW-CrossEnv"; sourceTree = "<group>"; };
+		2C78D0911A20D4D200891BA3 /* NIOS2-Linux */ = {isa = PBXFileReference; lastKnownFileType = text; path = "NIOS2-Linux"; sourceTree = "<group>"; };
+		2C78D0921A20D4D200891BA3 /* OSF1 */ = {isa = PBXFileReference; lastKnownFileType = text; path = OSF1; sourceTree = "<group>"; };
+		2C78D0931A20D4D200891BA3 /* PPC-Linux */ = {isa = PBXFileReference; lastKnownFileType = text; path = "PPC-Linux"; sourceTree = "<group>"; };
+		2C78D0941A20D4D200891BA3 /* QNX */ = {isa = PBXFileReference; lastKnownFileType = text; path = QNX; sourceTree = "<group>"; };
+		2C78D0951A20D4D200891BA3 /* SH-Linux */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SH-Linux"; sourceTree = "<group>"; };
+		2C78D0961A20D4D200891BA3 /* SSV-LINUX */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SSV-LINUX"; sourceTree = "<group>"; };
+		2C78D0971A20D4D200891BA3 /* SunOS */ = {isa = PBXFileReference; lastKnownFileType = text; path = SunOS; sourceTree = "<group>"; };
+		2C78D0981A20D4D200891BA3 /* SunOS-GCC */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SunOS-GCC"; sourceTree = "<group>"; };
+		2C78D0991A20D4D200891BA3 /* SunOS-stdcxx-x86_64 */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SunOS-stdcxx-x86_64"; sourceTree = "<group>"; };
+		2C78D09A1A20D4D200891BA3 /* SunOS-SunForte */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SunOS-SunForte"; sourceTree = "<group>"; };
+		2C78D09B1A20D4D200891BA3 /* SunOS-SunStudio */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SunOS-SunStudio"; sourceTree = "<group>"; };
+		2C78D09C1A20D4D200891BA3 /* SunOS-SunStudio11 */ = {isa = PBXFileReference; lastKnownFileType = text; path = "SunOS-SunStudio11"; sourceTree = "<group>"; };
+		2C78D09D1A20D4D200891BA3 /* Yocto */ = {isa = PBXFileReference; lastKnownFileType = text; path = Yocto; sourceTree = "<group>"; };
+		2C78D09F1A20D4D200891BA3 /* compile */ = {isa = PBXFileReference; lastKnownFileType = text; path = compile; sourceTree = "<group>"; };
+		2C78D0A01A20D4D200891BA3 /* dylib */ = {isa = PBXFileReference; lastKnownFileType = text; path = dylib; sourceTree = "<group>"; };
+		2C78D0A11A20D4D200891BA3 /* exec */ = {isa = PBXFileReference; lastKnownFileType = text; path = exec; sourceTree = "<group>"; };
+		2C78D0A21A20D4D200891BA3 /* global */ = {isa = PBXFileReference; lastKnownFileType = text; path = global; sourceTree = "<group>"; };
+		2C78D0A31A20D4D200891BA3 /* lib */ = {isa = PBXFileReference; lastKnownFileType = text; path = lib; sourceTree = "<group>"; };
+		2C78D0A41A20D4D200891BA3 /* sample */ = {isa = PBXFileReference; lastKnownFileType = text; path = sample; sourceTree = "<group>"; };
+		2C78D0A61A20D4D200891BA3 /* makedepend.aCC */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = makedepend.aCC; sourceTree = "<group>"; };
+		2C78D0A71A20D4D200891BA3 /* makedepend.clang */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = makedepend.clang; sourceTree = "<group>"; };
+		2C78D0A81A20D4D200891BA3 /* makedepend.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = makedepend.cxx; sourceTree = "<group>"; };
+		2C78D0A91A20D4D200891BA3 /* makedepend.gcc */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = makedepend.gcc; sourceTree = "<group>"; };
+		2C78D0AA1A20D4D200891BA3 /* makedepend.qcc */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = makedepend.qcc; sourceTree = "<group>"; };
+		2C78D0AB1A20D4D200891BA3 /* makedepend.SunCC */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = makedepend.SunCC; sourceTree = "<group>"; };
+		2C78D0AC1A20D4D200891BA3 /* makedepend.xlC */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = makedepend.xlC; sourceTree = "<group>"; };
+		2C78D0AD1A20D4D200891BA3 /* makeldpath */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = makeldpath; sourceTree = "<group>"; };
+		2C78D0AE1A20D4D200891BA3 /* projname */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = projname; sourceTree = "<group>"; };
+		2C78D0AF1A20D4D200891BA3 /* shlibln */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = shlibln; sourceTree = "<group>"; };
+		2C78D0B01A20D4D200891BA3 /* vxprogen */ = {isa = PBXFileReference; lastKnownFileType = text; path = vxprogen; sourceTree = "<group>"; };
+		2C78D0B21A20D4D200891BA3 /* build.com */ = {isa = PBXFileReference; lastKnownFileType = text; path = build.com; sourceTree = "<group>"; };
+		2C78D0B31A20D4D200891BA3 /* pococc.com */ = {isa = PBXFileReference; lastKnownFileType = text; path = pococc.com; sourceTree = "<group>"; };
+		2C78D0B41A20D4D200891BA3 /* pococxx.com */ = {isa = PBXFileReference; lastKnownFileType = text; path = pococxx.com; sourceTree = "<group>"; };
+		2C78D0B51A20D4D200891BA3 /* pocolib.com */ = {isa = PBXFileReference; lastKnownFileType = text; path = pocolib.com; sourceTree = "<group>"; };
+		2C78D0B61A20D4D200891BA3 /* pocolnk.com */ = {isa = PBXFileReference; lastKnownFileType = text; path = pocolnk.com; sourceTree = "<group>"; };
+		2C78D0B81A20D4D200891BA3 /* PPC440diab_debug */ = {isa = PBXFileReference; lastKnownFileType = text; path = PPC440diab_debug; sourceTree = "<group>"; };
+		2C78D0B91A20D4D200891BA3 /* PPC440diab_release */ = {isa = PBXFileReference; lastKnownFileType = text; path = PPC440diab_release; sourceTree = "<group>"; };
+		2C78D0BA1A20D4F100891BA3 /* libPocoFoundationd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPocoFoundationd.a; path = "../../../Downloads/poco-1.4.7/lib/iPhoneSimulator/x86_64/libPocoFoundationd.a"; sourceTree = "<group>"; };
 		2CB69F771A0D8E1C00E2B018 /* PPBoard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PPBoard.cpp; sourceTree = "<group>"; };
 		2CB69F781A0D8E1C00E2B018 /* PPBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PPBoard.h; sourceTree = "<group>"; };
 		2CB69F7A1A0D918700E2B018 /* PPBonus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PPBonus.cpp; sourceTree = "<group>"; };
@@ -195,7 +268,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C41A1471A0FA87B00064B7F /* libPocoFoundationd.a in Frameworks */,
+				2C78D0BB1A20D4F100891BA3 /* libPocoFoundationd.a in Frameworks */,
 				2C41A1481A0FA87B00064B7F /* libPocoNetd.a in Frameworks */,
 				1AC6FB30180E99EB004C840B /* libcocos2d iOS.a in Frameworks */,
 				D6B0611B1803AB670077942B /* CoreMotion.framework in Frameworks */,
@@ -282,6 +355,8 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2C78D0BA1A20D4F100891BA3 /* libPocoFoundationd.a */,
+				2C78D06C1A20D4D100891BA3 /* build */,
 				2C41A1451A0FA87B00064B7F /* libPocoFoundationd.a */,
 				2C41A1461A0FA87B00064B7F /* libPocoNetd.a */,
 				D6B0611A1803AB670077942B /* CoreMotion.framework */,
@@ -301,6 +376,126 @@
 				1DF5F4DF0D08C38300B7A737 /* UIKit.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2C78D06C1A20D4D100891BA3 /* build */ = {
+			isa = PBXGroup;
+			children = (
+				2C78D06D1A20D4D100891BA3 /* config */,
+				2C78D09E1A20D4D200891BA3 /* rules */,
+				2C78D0A51A20D4D200891BA3 /* script */,
+				2C78D0B11A20D4D200891BA3 /* vms */,
+				2C78D0B71A20D4D200891BA3 /* vxconfig */,
+			);
+			name = build;
+			path = "../../../Downloads/poco-1.4.7/build";
+			sourceTree = "<group>";
+		};
+		2C78D06D1A20D4D100891BA3 /* config */ = {
+			isa = PBXGroup;
+			children = (
+				2C78D06E1A20D4D100891BA3 /* AIX */,
+				2C78D06F1A20D4D100891BA3 /* Android */,
+				2C78D0701A20D4D200891BA3 /* Angstrom */,
+				2C78D0711A20D4D200891BA3 /* ARM-Linux */,
+				2C78D0721A20D4D200891BA3 /* BeagleBoard */,
+				2C78D0731A20D4D200891BA3 /* CEGCCARM */,
+				2C78D0741A20D4D200891BA3 /* CygLinux */,
+				2C78D0751A20D4D200891BA3 /* CYGWIN */,
+				2C78D0761A20D4D200891BA3 /* Darwin */,
+				2C78D0771A20D4D200891BA3 /* Darwin-clang */,
+				2C78D0781A20D4D200891BA3 /* Darwin-clang-libc++ */,
+				2C78D0791A20D4D200891BA3 /* Darwin-gcc */,
+				2C78D07A1A20D4D200891BA3 /* Darwin32 */,
+				2C78D07B1A20D4D200891BA3 /* Darwin32-clang */,
+				2C78D07C1A20D4D200891BA3 /* Darwin32-clang-libc++ */,
+				2C78D07D1A20D4D200891BA3 /* Darwin32-gcc */,
+				2C78D07E1A20D4D200891BA3 /* Darwin64 */,
+				2C78D07F1A20D4D200891BA3 /* Darwin64-clang */,
+				2C78D0801A20D4D200891BA3 /* Darwin64-clang-libc++ */,
+				2C78D0811A20D4D200891BA3 /* Darwin64-gcc */,
+				2C78D0821A20D4D200891BA3 /* DigiEL */,
+				2C78D0831A20D4D200891BA3 /* ELDK */,
+				2C78D0841A20D4D200891BA3 /* FreeBSD */,
+				2C78D0851A20D4D200891BA3 /* GCCEMBEDLINUX */,
+				2C78D0861A20D4D200891BA3 /* HP-UX */,
+				2C78D0871A20D4D200891BA3 /* iPhone */,
+				2C78D0881A20D4D200891BA3 /* iPhone-clang */,
+				2C78D0891A20D4D200891BA3 /* iPhone-clang-libc++ */,
+				2C78D08A1A20D4D200891BA3 /* iPhoneSimulator */,
+				2C78D08B1A20D4D200891BA3 /* iPhoneSimulator-clang */,
+				2C78D08C1A20D4D200891BA3 /* iPhoneSimulator-clang-libc++ */,
+				2C78D08D1A20D4D200891BA3 /* Linux */,
+				2C78D08E1A20D4D200891BA3 /* Linux-stlport */,
+				2C78D08F1A20D4D200891BA3 /* MinGW */,
+				2C78D0901A20D4D200891BA3 /* MinGW-CrossEnv */,
+				2C78D0911A20D4D200891BA3 /* NIOS2-Linux */,
+				2C78D0921A20D4D200891BA3 /* OSF1 */,
+				2C78D0931A20D4D200891BA3 /* PPC-Linux */,
+				2C78D0941A20D4D200891BA3 /* QNX */,
+				2C78D0951A20D4D200891BA3 /* SH-Linux */,
+				2C78D0961A20D4D200891BA3 /* SSV-LINUX */,
+				2C78D0971A20D4D200891BA3 /* SunOS */,
+				2C78D0981A20D4D200891BA3 /* SunOS-GCC */,
+				2C78D0991A20D4D200891BA3 /* SunOS-stdcxx-x86_64 */,
+				2C78D09A1A20D4D200891BA3 /* SunOS-SunForte */,
+				2C78D09B1A20D4D200891BA3 /* SunOS-SunStudio */,
+				2C78D09C1A20D4D200891BA3 /* SunOS-SunStudio11 */,
+				2C78D09D1A20D4D200891BA3 /* Yocto */,
+			);
+			path = config;
+			sourceTree = "<group>";
+		};
+		2C78D09E1A20D4D200891BA3 /* rules */ = {
+			isa = PBXGroup;
+			children = (
+				2C78D09F1A20D4D200891BA3 /* compile */,
+				2C78D0A01A20D4D200891BA3 /* dylib */,
+				2C78D0A11A20D4D200891BA3 /* exec */,
+				2C78D0A21A20D4D200891BA3 /* global */,
+				2C78D0A31A20D4D200891BA3 /* lib */,
+				2C78D0A41A20D4D200891BA3 /* sample */,
+			);
+			path = rules;
+			sourceTree = "<group>";
+		};
+		2C78D0A51A20D4D200891BA3 /* script */ = {
+			isa = PBXGroup;
+			children = (
+				2C78D0A61A20D4D200891BA3 /* makedepend.aCC */,
+				2C78D0A71A20D4D200891BA3 /* makedepend.clang */,
+				2C78D0A81A20D4D200891BA3 /* makedepend.cxx */,
+				2C78D0A91A20D4D200891BA3 /* makedepend.gcc */,
+				2C78D0AA1A20D4D200891BA3 /* makedepend.qcc */,
+				2C78D0AB1A20D4D200891BA3 /* makedepend.SunCC */,
+				2C78D0AC1A20D4D200891BA3 /* makedepend.xlC */,
+				2C78D0AD1A20D4D200891BA3 /* makeldpath */,
+				2C78D0AE1A20D4D200891BA3 /* projname */,
+				2C78D0AF1A20D4D200891BA3 /* shlibln */,
+				2C78D0B01A20D4D200891BA3 /* vxprogen */,
+			);
+			path = script;
+			sourceTree = "<group>";
+		};
+		2C78D0B11A20D4D200891BA3 /* vms */ = {
+			isa = PBXGroup;
+			children = (
+				2C78D0B21A20D4D200891BA3 /* build.com */,
+				2C78D0B31A20D4D200891BA3 /* pococc.com */,
+				2C78D0B41A20D4D200891BA3 /* pococxx.com */,
+				2C78D0B51A20D4D200891BA3 /* pocolib.com */,
+				2C78D0B61A20D4D200891BA3 /* pocolnk.com */,
+			);
+			path = vms;
+			sourceTree = "<group>";
+		};
+		2C78D0B71A20D4D200891BA3 /* vxconfig */ = {
+			isa = PBXGroup;
+			children = (
+				2C78D0B81A20D4D200891BA3 /* PPC440diab_debug */,
+				2C78D0B91A20D4D200891BA3 /* PPC440diab_release */,
+			);
+			path = vxconfig;
 			sourceTree = "<group>";
 		};
 		46880B7519C43A67006E1F66 /* Resources */ = {
@@ -591,8 +786,7 @@
 				COMPRESS_PNG_FILES = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ios/Prefix.pch;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					USE_FILE32API,
 					CC_TARGET_OS_IPHONE,
@@ -624,8 +818,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ios/Prefix.pch;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					USE_FILE32API,
 					CC_TARGET_OS_IPHONE,
