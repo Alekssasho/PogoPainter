@@ -31,16 +31,9 @@ bool PogoPainterResults::init()
 	return true;
 }
 
-void PogoPainterResults::update(float dt)
-{
-
-}
-
-void PogoPainterResults::setResults(vector<int> res)
+void PogoPainterResults::setResults(const vector<int>& res)
 {
 	results = res;
-
-
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
@@ -114,7 +107,7 @@ void PogoPainterResults::setResults(vector<int> res)
     auto eventListener = EventListenerTouchOneByOne::create();
     eventListener->onTouchBegan = [](Touch* t, Event* e) {
 
-        PPBonusManager::getInstance().clear();
+        BonusManager::getInstance().clear();
         Director::getInstance()->replaceScene(PogoPainter::createScene());
         return true;
     };

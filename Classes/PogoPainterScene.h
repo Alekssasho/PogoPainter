@@ -3,47 +3,34 @@
 
 #include <map>
 #include <vector>
-#include <memory>
+#include <array>
 #include "cocos2d.h"
-#include "PPBoard.h"
-#include "PPBonus.h"
-#include "PPPlayer.h"
+#include "GameManager.h"
 
 using namespace cocos2d;
 using namespace std;
 
-#define TICK_DELAY 0.5f
-
 class PogoPainter : public Layer
 {
 private:
-    PPBoard board;
-    vector<unique_ptr<PPPlayer>> players;
-    map<PPColor, Texture2D*> textures;
-	int timer;
-    int ticks = 0;
+    map<Color, Texture2D*> textures;
+    GameManager manager;
+    std::array<Sprite*, Board::boardSize * Board::boardSize> spriteCells;
+    std::vector<Sprite*> spritePlayers;
+    
     bool mInit = false;
 public:
-    // there's no 'id' in cpp, so we recommend returning the class instance pointer
     static Scene* createScene();
 
-    // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     bool init() override;
     
     void update(float dt) override;
     
     void gameTick(float dt);
     
-    PPBoard& getBoard() { return board; }
-    vector<unique_ptr<PPPlayer>>& getPlayers() { return players; }
-    
-    void attachPlayer(PPColor color);
+    void attachPlayers();
     void registerEventListener(EventListener* listener);
     
-    // a selector callback
-    void menuCloseCallback(Ref* pSender);
-    
-    // implement the "static create()" method manually
     CREATE_FUNC(PogoPainter);
 };
 

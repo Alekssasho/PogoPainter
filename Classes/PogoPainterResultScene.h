@@ -21,11 +21,10 @@ private:
 public:
     static Scene* createScene();
     bool init() override;
-    void update(float dt) override;
     
 	void registerEventListener(EventListener* listener);
 
-	void setResults(vector<int> points);
+	void setResults(const vector<int>& points);
     
     CREATE_FUNC(PogoPainterResults);
 };
