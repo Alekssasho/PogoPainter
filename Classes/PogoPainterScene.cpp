@@ -9,6 +9,15 @@ USING_NS_CC;
 
 #define SPRITE_CELL(pos) this->spriteCells[(pos).x + (pos).y * Board::boardSize]
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+template<typename T>
+string to_string(const T& t) {
+    ostringstream os;
+    os << t;
+    return os.str();
+}
+#endif
+
 Scene* PogoPainter::createScene()
 {
 	// 'scene' is an autorelease object

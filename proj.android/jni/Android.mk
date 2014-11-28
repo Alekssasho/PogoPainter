@@ -1,6 +1,18 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+LOCAL_MODULE    := poco_foundation
+LOCAL_SRC_FILES := ../../libs/Android/libPocoFoundationd.a
+
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE    := poco_net
+LOCAL_SRC_FILES := ../../libs/Android/libPocoNetd.a
+
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
 
 $(call import-add-path,$(LOCAL_PATH)/../../cocos2d)
 $(call import-add-path,$(LOCAL_PATH)/../../cocos2d/external)
@@ -11,24 +23,21 @@ LOCAL_MODULE := cocos2dcpp_shared
 LOCAL_MODULE_FILENAME := libcocos2dcpp
 
 LOCAL_SRC_FILES := hellocpp/main.cpp \
-                   ../../Classes/AppDelegate.cpp \
-                   ../../Classes/PPBoard.cpp \
-                   ../../Classes/PPBonus.cpp \
-                   ../../Classes/PPPlayer.cpp \
-                   ../../Classes/PogoPainterScene.cpp \
-		   ../../Classes/PogoPainterMenuScene.cpp \
-		   ../../Classes/PogoPainterResultScene.cpp
+				   ../../Classes/AppDelegate.cpp \
+				   ../../Classes/PogoPainterScene.cpp \
+				   ../../Classes/PogoPainterMenuScene.cpp \
+				   ../../Classes/PogoPainterResultScene.cpp \
+				   ../../Classes/BonusManager.cpp \
+				   ../../Classes/Bonuses.cpp \
+				   ../../Classes/GameManager.cpp \
+				   ../../Classes/GameState.cpp \
+				   ../../Classes/SpecificPlayers.cpp
+
+
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 
-LOCAL_STATIC_LIBRARIES := cocos2dx_static
+LOCAL_STATIC_LIBRARIES := cocos2dx_static poco_net poco_foundation
 
 include $(BUILD_SHARED_LIBRARY)
 
 $(call import-module,.)
-
-
-
-
-
-
-

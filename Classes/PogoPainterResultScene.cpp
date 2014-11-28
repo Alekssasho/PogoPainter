@@ -11,6 +11,15 @@
 
 USING_NS_CC;
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+template<typename T>
+string to_string(const T& t) {
+    ostringstream os;
+    os << t;
+    return os.str();
+}
+#endif
+
 Scene* PogoPainterResults::createScene()
 {
 	auto scene = Scene::create();
