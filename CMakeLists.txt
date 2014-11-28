@@ -46,9 +46,11 @@ set(GAME_SRC
   Classes/PogoPainterMenuScene.cpp
   Classes/PogoPainterResultScene.cpp
   Classes/PogoPainterScene.cpp
-  Classes/PPBoard.cpp
-  Classes/PPBonus.cpp
-  Classes/PPPlayer.cpp
+  Classes/BonusManager.cpp
+  Classes/Bonuses.cpp
+  Classes/GameManager.cpp
+  Classes/GameState.cpp
+  Classes/SpecificPlayers.cpp
 )
 
 set(GAME_HEADERS
@@ -56,9 +58,15 @@ set(GAME_HEADERS
   Classes/PogoPainterMenuScene.h
   Classes/PogoPainterResultScene.h
   Classes/PogoPainterScene.h
-  Classes/PPBoard.h
-  Classes/PPBonus.h
-  Classes/PPPlayer.h
+  Classes/BaseClasses.h
+  Classes/Board.h
+  Classes/BonusManager.h
+  Classes/Bonuses.h
+  Classes/Enums.h
+  Classes/GameManager.h
+  Classes/GameState.h
+  Classes/Macros.h
+  Classes/SpecificPlayers.h
 )
 
 if( APPLE AND IOS )
@@ -74,7 +82,6 @@ set(GAME_HEADERS ${GAME_HEADERS}
 )
 elseif(APPLE) #desktop
 include_directories(Classes)
-include(Classes/CMakeLists.txt)
 set(GAME_SRC ${GAME_SRC}
   proj.ios_mac/mac/main.cpp
 )
