@@ -138,22 +138,30 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
+    <ClCompile Include="..\Classes\Bonuses.cpp" />
+    <ClCompile Include="..\Classes\BonusManager.cpp" />
+    <ClCompile Include="..\Classes\GameManager.cpp" />
+    <ClCompile Include="..\Classes\GameState.cpp" />
     <ClCompile Include="..\Classes\PogoPainterMenuScene.cpp" />
     <ClCompile Include="..\Classes\PogoPainterResultScene.cpp" />
     <ClCompile Include="..\Classes\PogoPainterScene.cpp" />
-    <ClCompile Include="..\Classes\PPBoard.cpp" />
-    <ClCompile Include="..\Classes\PPBonus.cpp" />
-    <ClCompile Include="..\Classes\PPPlayer.cpp" />
+    <ClCompile Include="..\Classes\SpecificPlayers.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
+    <ClInclude Include="..\Classes\BaseClasses.h" />
+    <ClInclude Include="..\Classes\Board.h" />
+    <ClInclude Include="..\Classes\Bonuses.h" />
+    <ClInclude Include="..\Classes\BonusManager.h" />
+    <ClInclude Include="..\Classes\Enums.h" />
+    <ClInclude Include="..\Classes\GameManager.h" />
+    <ClInclude Include="..\Classes\GameState.h" />
+    <ClInclude Include="..\Classes\Macros.h" />
     <ClInclude Include="..\Classes\PogoPainterMenuScene.h" />
     <ClInclude Include="..\Classes\PogoPainterResultScene.h" />
     <ClInclude Include="..\Classes\PogoPainterScene.h" />
-    <ClInclude Include="..\Classes\PPBoard.h" />
-    <ClInclude Include="..\Classes\PPBonus.h" />
-    <ClInclude Include="..\Classes\PPPlayer.h" />
+    <ClInclude Include="..\Classes\SpecificPlayers.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>

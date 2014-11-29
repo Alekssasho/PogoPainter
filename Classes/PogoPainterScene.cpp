@@ -323,11 +323,18 @@ void PogoPainter::gameTick(float dt)
     
     
     //Handle line above
-    
+
+#if defined(_MSC_VER)
+    int maxPoints = 0;
+    std::for_each(players.begin(), players.end(), [&maxPoints](const PlayerPtr & player) {
+        maxPoints += player->points;
+    });
+#else
     int maxPoints = std::accumulate(players.begin(), players.end(), 0, [](const int acc, const PlayerPtr& pPl) {
         return acc + pPl->points;
     });
-    
+#endif
+
     //Ugly hack ask Aleksandar for explanation
     maxPoints += 40;
     
