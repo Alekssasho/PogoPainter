@@ -71,7 +71,7 @@ void GameManager::update(float deltaTime)
     auto& players = mState.players();
     auto& board = mState.board();
     
-    for(int i = 0; i < players.size(); ++i) {
+    for(unsigned int i = 0; i < players.size(); ++i) {
         auto& pl = players[i];
         auto& pBonus = board[pl->pos].pBonus;
         if(pBonus) {

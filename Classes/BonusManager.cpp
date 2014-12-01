@@ -16,7 +16,7 @@ using namespace cocos2d;
 
 void BonusManager::update(GameState& state)
 {
-    static int step1 = 0;
+    static unsigned int step1 = 0;
     if (step1++ < steps_delay) {
         return;
     }
@@ -64,7 +64,7 @@ void BonusManager::update(GameState& state)
         SEND_EVENT("NewBonus", board[pos].pBonus);
     }
     
-    static int step2 = 0;
+    static unsigned int step2 = 0;
     if (step2++ < steps_delay) {
         return;
     }
@@ -77,7 +77,7 @@ void BonusManager::update(GameState& state)
             pos = get_pos();
         }
         
-        Bonus * bonus;
+        Bonus * bonus = nullptr;
         switch (bonus_picker(generator))
         {
             case 0:

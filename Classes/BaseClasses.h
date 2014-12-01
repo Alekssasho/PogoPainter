@@ -17,7 +17,7 @@
 using cocos2d::Vec2;
 
 struct Cell;
-struct GameState;
+class GameState;
 
 struct Player
 {

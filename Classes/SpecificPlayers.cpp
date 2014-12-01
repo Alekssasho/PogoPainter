@@ -58,7 +58,7 @@ double StupidAiPlayer::calcDistanceFromTo(int fromX, int fromY, int toX, int toY
 Bonus* StupidAiPlayer::getNearestBonus(const std::vector<BonusPtr>& bonuses)
 {
     double minDistance = 1000;
-    Bonus* selected;
+    Bonus* selected = nullptr;
     
     for (auto& bonus: bonuses) {
         double distance = this->calcDistanceFromPlayerTo(bonus->cell.x, bonus->cell.y);
@@ -74,7 +74,7 @@ Bonus* StupidAiPlayer::getNearestBonus(const std::vector<BonusPtr>& bonuses)
 Bonus* StupidAiPlayer::getNearestCheckpoint(const std::vector<BonusPtr>& checkpoints)
 {
     double minDistance = 1000;
-    Bonus* selected;
+    Bonus* selected = nullptr;
     
     for (auto& bonus: checkpoints) {
         double distance = this->calcDistanceFromPlayerTo(bonus->cell.x, bonus->cell.y);

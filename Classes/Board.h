@@ -17,7 +17,7 @@
 using cocos2d::Vec2;
 
 //forward declarations
-class Bonus;
+struct Bonus;
 
 struct Cell
 {

@@ -5,6 +5,8 @@
 #include "PogoPainterResultScene.h"
 #include "Macros.h"
 
+#include <numeric>
+
 USING_NS_CC;
 
 #define SPRITE_CELL(pos) this->spriteCells[(pos).x + (pos).y * Board::boardSize]
@@ -133,7 +135,7 @@ bool PogoPainter::init()
 
     ADD_DELEGATE("NewBonus", [this](EventCustom* e) {
         auto pBonus = static_cast<Bonus*>(e->getUserData());
-        Sprite* pSprite;
+        Sprite* pSprite = nullptr;
         if(dynamic_cast<Checkpoint*>(pBonus)) {
             pSprite = Sprite::create("Bonuses/bonus_checkpoint.png");
         } else if(dynamic_cast<Arrow*>(pBonus)) {
@@ -324,16 +326,9 @@ void PogoPainter::gameTick(float dt)
     
     //Handle line above
 
-#if defined(_MSC_VER)
-    int maxPoints = 0;
-    std::for_each(players.begin(), players.end(), [&maxPoints](const PlayerPtr & player) {
-        maxPoints += player->points;
-    });
-#else
     int maxPoints = std::accumulate(players.begin(), players.end(), 0, [](const int acc, const PlayerPtr& pPl) {
         return acc + pPl->points;
     });
-#endif
 
     //Ugly hack ask Aleksandar for explanation
     maxPoints += 40;
@@ -375,7 +370,7 @@ void PogoPainter::update(float dt)
 void PogoPainter::attachPlayers()
 {
 	int rotation;
-	Sprite* pSprite;
+	Sprite* pSprite = nullptr;
     for(auto& pPl : manager.state().players()) {
         switch (pPl->color) {
         case Color::Red:
