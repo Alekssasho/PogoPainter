@@ -35,4 +35,14 @@ protected:
     Direction getNextDirection();
 };
 
+struct ServerPlayer : public Player 
+{
+    Direction getDirection() override { return currentDirection; };
+
+    Vec2 pos;
+    Direction currentDirection;
+    int points = 0;
+    Color color;
+};
+
 #endif /* defined(__PogoPainter__SpecificPlayers__) */

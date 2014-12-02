@@ -151,7 +151,7 @@ bool PogoPainter::init()
 
         auto& spriteCell = SPRITE_CELL(Vec2(pBonus->cell.x, pBonus->cell.y));
         pSprite->setPosition(spriteCell->getPosition());
-        pSprite->setScale(0.01);
+        pSprite->setScale(0.01f);
         auto targetScale = spriteCell->getScale();
         pSprite->runAction(ScaleTo::create(0.20f, targetScale));
         pSprite->setTag(pBonus->cell.x + pBonus->cell.y * Board::boardSize);
@@ -375,7 +375,6 @@ void PogoPainter::update(float dt)
 
 
 void PogoPainter::attachPlayers() {
-    int rotation;
     Sprite* pSprite;
 
     struct player_info {

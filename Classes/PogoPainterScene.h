@@ -14,6 +14,7 @@ class PogoPainter : public Layer
 {
 private:
     map<Color, Texture2D*> textures;
+    //TODO: Replace with client manager
     GameManager manager;
     std::array<Sprite*, Board::boardSize * Board::boardSize> spriteCells;
     std::vector<Sprite*> spritePlayers;

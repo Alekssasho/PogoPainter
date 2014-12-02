@@ -64,3 +64,12 @@ void GameState::deserialize()
         player->points = state_player.points;
     }
 }
+
+void GameState::client_deserialize()
+{
+    int pid = 0;
+    for (auto & player : mPlayers) {
+        auto & state_player = state.player[pid++];
+        player->currentDirection = state_player.dir;
+    }
+}

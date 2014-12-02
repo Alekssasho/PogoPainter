@@ -19,15 +19,15 @@ using Players = std::vector<PlayerPtr>;
 class GameState
 {
 public:
-    struct {
+    struct game_state {
         int tick;
-        struct {
+        struct board_state {
             bool has_bonus : 1;
             Bonus::Type bonus_type : 7;
             unsigned char bonus_data;
             Color color;
         } board[Board::boardSize * Board::boardSize];
-        struct {
+        struct player_state {
             Color color;
             Direction dir;
             std::array<unsigned char, 2> pos;
@@ -41,6 +41,9 @@ public:
     
     void serialize();
     void deserialize();
+
+    // will deserialize only client input
+    void client_deserialize();
     
     void incrementTick() {
         ++mTicks;
