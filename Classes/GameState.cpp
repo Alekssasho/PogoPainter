@@ -59,7 +59,7 @@ void GameState::deserialize()
         auto & state_player = state.player[pid++];
 
         player->color = state_player.color;
-        player->getDirection = state_player.dir;
+        player->currentDirection = state_player.dir;
         player->pos = Vec2(state_player.pos[0], state_player.pos[1]);
         player->points = state_player.points;
     }
