@@ -20,7 +20,9 @@ string to_string(const T& t) {
 }
 #endif
 
-Scene* PogoPainter::createScene() {
+
+Scene* PogoPainter::createScene()
+{
     // 'scene' is an autorelease object
     auto scene = Scene::create();
 
@@ -38,10 +40,12 @@ Scene* PogoPainter::createScene() {
 //TODO: we need destroy method so we can clean up the whole mess, restarting the game in the moment doesn't work properly
 
 // on "init" you need to initialize your instance
-bool PogoPainter::init() {
+bool PogoPainter::init()
+{
     //////////////////////////////
     // 1. super init first
-    if (!Layer::init()) {
+    if (!Layer::init())
+    {
         return false;
     }
 
@@ -139,7 +143,7 @@ bool PogoPainter::init() {
     ADD_DELEGATE("NewBonus", [this](EventCustom* e) {
         auto pBonus = static_cast<Bonus*>(e->getUserData());
         Sprite* pSprite = nullptr;
-        if(dynamic_cast<Checkpoint*>(pBonus)) {
+        if (dynamic_cast<Checkpoint*>(pBonus)) {
             pSprite = Sprite::create("Bonuses/bonus_checkpoint.png");
         } else if (dynamic_cast<Arrow*>(pBonus)) {
             pSprite = Sprite::create("Bonuses/bonus_arrow.png");
@@ -167,10 +171,10 @@ bool PogoPainter::init() {
         //TODO: check if there is bug when cells are blinking and new player colors the blinking cell ???
         auto action = Repeat::create(Sequence::create(
             DelayTime::create(0.08f),
+
             CallFunc::create([spriteCell, currentTexture] { spriteCell->setTexture(currentTexture); }),
             DelayTime::create(0.08f),
             CallFunc::create([spriteCell, this] { spriteCell->setTexture(this->textures[Color::Gray]); }), NULL), 2);
-
         spriteCell->runAction(action);
     });
 
@@ -360,7 +364,9 @@ void PogoPainter::gameTick(float dt) {
     }
 }
 
-void PogoPainter::update(float dt) {
+
+void PogoPainter::update(float dt)
+{
     if (!mInit) {
         this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), GameManager::tickDelay);
         mInit = true;

@@ -34,37 +34,35 @@ void GameManager::init()
     pHumanPlayer->color = Color::Red;
     pHumanPlayer->currentDirection = Direction::Up;
     pHumanPlayer->pos = Vec2(0, 0);
-    mState.mPlayers.push_back(PlayerPtr(pHumanPlayer));
+    mState.players().push_back(PlayerPtr(pHumanPlayer));
     
     auto pAi = new StupidAiPlayer;
     pAi->color = Color::Green;
     pAi->currentDirection = Direction::Right;
     pAi->pos = Vec2(0, 7);
-    mState.mPlayers.push_back(PlayerPtr(pAi));
+    mState.players().push_back(PlayerPtr(pAi));
     
     pAi = new StupidAiPlayer;
     pAi->color = Color:: Blue;
     pAi->currentDirection = Direction::Down;
     pAi->pos = Vec2(7, 7);
-    mState.mPlayers.push_back(PlayerPtr(pAi));
+    mState.players().push_back(PlayerPtr(pAi));
     
     pAi = new StupidAiPlayer;
     pAi->color = Color::Yellow;
     pAi->currentDirection = Direction::Left;
     pAi->pos = Vec2(7, 0);
-    mState.mPlayers.push_back(PlayerPtr(pAi));
+    mState.players().push_back(PlayerPtr(pAi));
 }
 
 void GameManager::update(float deltaTime)
 {
+    mState.incrementTick();
     int ticks = mState.ticks();
     if (ticks % 2 == 0){
         if ((mTimer - ticks) / 2 <= 10 )
             CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sounds/beep-08.wav");
     }
-    
-    //increment time
-    ticks = ++mState.mTicks;
     
     BonusManager::getInstance().update(mState);
     

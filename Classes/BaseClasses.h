@@ -32,16 +32,22 @@ struct Player
 
 using PlayerPtr = std::unique_ptr<Player>;
 
-struct Bonus
+class Bonus
 {
-    Bonus(Cell& c)
-    : cell(c)
+public:
+    enum Type { Checkpoint, Arrow } type;
+
+    Bonus(Cell& c, Type t)
+        : cell(c), type(t)
     {}
-    
+
     virtual ~Bonus() {}
     virtual void apply(GameState& state, int playerIndex) = 0;
     virtual void update(GameState& state) {}
-    
+
+    virtual unsigned char getData() const { return 0; }
+    virtual void setData(unsigned char data) {};
+
     Cell& cell;
 };
 

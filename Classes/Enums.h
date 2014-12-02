@@ -9,7 +9,7 @@
 #ifndef PogoPainter_Enums_h
 #define PogoPainter_Enums_h
 
-enum Color
+enum Color : unsigned char
 {
     Red,
     Green,
@@ -18,7 +18,7 @@ enum Color
     Gray
 };
 
-enum Direction
+enum Direction : unsigned char
 {
     Left,
     Up,
