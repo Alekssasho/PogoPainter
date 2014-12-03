@@ -35,7 +35,7 @@ struct PlayerData {
 };
 
 
-GameServer::GameServer(int gameTime = 90, int clients = 4)
+GameServer::GameServer(int gameTime, int clients)
 : factory(new TCPServerConnectionFactoryImpl<ServerConnection>()), mMaxClients(4), mRemoteClients(clients), mAlive(mRemoteClients, false), mTimer(gameTime)
 {
     static const std::vector<PlayerData> playerData = {
@@ -78,7 +78,8 @@ GameServer::~GameServer()
 
 void GameServer::waitToSend()
 {
-    mCanSendState.wait(unique_lock<mutex>(mWaitMutex), [this] () -> bool {
+    unique_lock<mutex> unqLock(mWaitMutex);
+    mCanSendState.wait(unqLock, [this] {
         return this->mRemoteClients == count(mAlive.begin(), mAlive.end(), true);
     });
 }

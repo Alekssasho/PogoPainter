@@ -33,7 +33,7 @@ void GameState::serialize()
 
         state_player.color = player->color;
         state_player.dir = player->currentDirection;
-        state_player.pos = { player->pos.x, player->pos.y };
+        state_player.pos = { static_cast<unsigned char>(player->pos.x), static_cast<unsigned char>(player->pos.y) };
         state_player.points = player->points;
     }
 }

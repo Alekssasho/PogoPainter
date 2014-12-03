@@ -17,21 +17,14 @@
 class Checkpoint : public Bonus
 {
 public:
-    //Inheriting constructors from Bonus
-    using Bonus::Bonus;
-#if defined(_MSC_VER)
     Checkpoint(Cell& c) : Bonus(c, Bonus::Type::Checkpoint) {}
-#endif
     void apply(GameState& state, int playerIndex) override;
 };
 
 class Arrow : public Bonus
 {
 public:
-    using Bonus::Bonus;
-#if defined(_MSC_VER)
     Arrow(Cell& c) : Bonus(c, Bonus::Type::Arrow) {}
-#endif
     void apply(GameState& state, int playerIndex) override;
     void update(GameState& state) override;
     Direction dir = Direction::Right;
@@ -41,7 +34,7 @@ public:
 };
 
 
-const std::unordered_map<Bonus::Type, std::function<Bonus*(Cell&)>> BonusInitializers = {
+const std::unordered_map<Bonus::Type, std::function<Bonus*(Cell&)>, std::hash<int>> BonusInitializers = {
     std::make_pair(Bonus::Type::Checkpoint, [](Cell & c) { return new Checkpoint(c);  }),
     std::make_pair(Bonus::Type::Arrow, [](Cell & c) { return new Arrow(c);  })
 };

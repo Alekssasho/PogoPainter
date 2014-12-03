@@ -615,6 +615,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
+					"/Users/aleksandar/Downloads/poco-1.4.7/Foundation/include",
+					"/Users/aleksandar/Downloads/poco-1.4.7/Net/include",
 					"$(inherited)",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios/Simulation",
@@ -645,6 +647,8 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
+					"/Users/aleksandar/Downloads/poco-1.4.7/Foundation/include",
+					"/Users/aleksandar/Downloads/poco-1.4.7/Net/include",
 					"$(inherited)",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios/Simulation",

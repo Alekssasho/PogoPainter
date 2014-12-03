@@ -39,6 +39,7 @@ private:
     const int mTimer;
 };
 
+class GameServer;
 
 class ServerConnection: public Poco::Net::TCPServerConnection
 {
@@ -77,7 +78,7 @@ public:
 
     enum Status { Waiting, Running, Stopped } status;
     
-    GameServer(int gameTime, int clients);
+    GameServer(int gameTime = 90, int clients = 4);
     ~GameServer();
 
     bool startGame();

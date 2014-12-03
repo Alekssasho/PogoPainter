@@ -384,7 +384,7 @@ void PogoPainter::attachPlayers() {
         int tag;
     };
 
-    static std::unordered_map<Color, player_info> player_data;
+    static std::unordered_map<Color, player_info, std::hash<unsigned char>> player_data;
 
     player_data[Color::Red] = { -(45 + 90), "Player/player_red.png", 1 , 100};
     player_data[Color::Blue] = { 45, "Player/player_blue.png", 5 , 200};
