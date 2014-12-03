@@ -48,6 +48,8 @@ public:
     void incrementTick() {
         ++mTicks;
     }
+    
+    void setTicks(int ticks) { mTicks = ticks; }
 
 private:
     

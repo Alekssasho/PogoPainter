@@ -131,7 +131,7 @@ bool PogoPainter::init()
             spriteRotateAngle += 180;
             break;
         default:
-            break;
+            return;
         }
         auto pSprite = this->spritePlayers[pl->color];
         pSprite->stopActionByTag(15);
@@ -160,6 +160,9 @@ bool PogoPainter::init()
 
     ADD_DELEGATE("RemoveBonus", [this](EventCustom* e) {
         auto pBonus = static_cast<Bonus*>(e->getUserData());
+        
+        
+        
         this->removeChildByTag(pBonus->cell.x + pBonus->cell.y * Board::boardSize);
     });
 
@@ -294,6 +297,10 @@ void PogoPainter::gameTick(float dt) {
     int timer = manager.timer();
     int ticks = manager.state().ticks();
     static_cast<Label*>(this->getChildByTag(4200))->setString("Timer: " + to_string((timer - ticks) / 2));
+    if (ticks % 2 == 0){
+        if ((timer - ticks) / 2 <= 10 )
+            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sounds/beep-08.wav");
+    }
 
     if (timer == ticks) {
         this->unscheduleAllCallbacks();

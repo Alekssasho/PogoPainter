@@ -39,6 +39,21 @@ private:
     const int mTimer;
 };
 
+class ClientConnection
+{
+public:
+    ClientConnection(const std::string& ipaddres = "127.0.0.1", int time = 90);
+    void sendDirection(Direction dir);
+private:
+    void registerWithServer();
+    void gameStarted();
+    void deserializeAndSendEvents();
+    
+    Poco::Net::StreamSocket mSocket;
+    GameState mState;
+    const int mTimer;
+};
+
 class GameServer;
 
 class ServerConnection: public Poco::Net::TCPServerConnection

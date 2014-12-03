@@ -24,6 +24,9 @@ using namespace std;
 const float GameServer::tickDelay = 0.5f;
 const float GameManager::tickDelay = 0.5f;
 
+//Globals
+const int gPortNumber = 8126;
+
 
 using namespace Poco::Net;
 GameServer * GameServer::self = nullptr;
@@ -65,7 +68,7 @@ GameServer::GameServer(int gameTime, int clients)
 
 
     GameServer::self = this;
-    ServerSocket sock(SocketAddress(IPAddress(), 8126));
+    ServerSocket sock(SocketAddress(IPAddress(), gPortNumber));
     server = new TCPServer(&*factory, sock);
     server->start();
 }
@@ -237,4 +240,108 @@ void ServerConnection::run()
     } catch (int) {
 
     }
+}
+
+ClientConnection::ClientConnection(const std::string& ipaddrs, int time)
+: mSocket(SocketAddress(ipaddrs, gPortNumber)), mTimer(time)
+{
+    this->registerWithServer();
+}
+
+void ClientConnection::registerWithServer()
+{
+    //TODO: init sequance with server
+    
+    //TODO: receive signal from server to start game
+    this->gameStarted();
+}
+
+void ClientConnection::gameStarted()
+{
+    //Register listening for swipes
+    ADD_DELEGATE("Swipe", [this](EventCustom* e) {
+        auto pDir = static_cast<Direction*>(e->getUserData());
+        
+        this->sendDirection(*pDir);
+    });
+
+    int size = sizeof(GameState::state);
+    char data[size];
+    int received = 0;
+    int got = 0;
+    //Server will tell us to stop the game  when it is finished
+    while(true) {
+        while(received != size) {
+            got = mSocket.receiveBytes(&data, size - received);
+            
+            memcpy(reinterpret_cast<char*>(&mState.state) + received, data, got);
+            received += got;
+        }
+        
+        received = 0;
+        
+        this->deserializeAndSendEvents();
+    }
+}
+
+void ClientConnection::deserializeAndSendEvents()
+{
+    auto& state = mState.state;
+    
+    mState.setTicks(state.tick);
+    
+    int pid = 0;
+    for (auto & player : mState.players()) {
+        auto & state_player = state.player[pid++];
+        
+        player->color = state_player.color;
+        player->currentDirection = state_player.dir;
+        player->pos = Vec2(state_player.pos[0], state_player.pos[1]);
+        player->points = state_player.points;
+        
+        SEND_EVENT("RotatePlayer", &*player);
+    }
+    
+    int cell_id = 0;
+    
+    for (auto & cell : mState.board().cells) {
+        auto & state_cell = state.board[cell_id++];
+        if(cell.color != Color::Gray && state_cell.color == Color::Gray) {
+            SEND_EVENT("RemoveColor", &cell);
+        }
+        cell.color = state_cell.color;
+        
+        //Handle bonuses
+        if (state_cell.has_bonus && !cell.pBonus) {
+            cell.pBonus = BonusInitializers.at(state_cell.bonus_type)(cell);
+            SEND_EVENT("NewBonus", cell.pBonus);
+        } else if (!state_cell.has_bonus && cell.pBonus) {
+            //TODO: Add sound effect
+            SEND_EVENT("RemoveBonus", cell.pBonus);
+            
+            if(cell.pBonus->type == Bonus::Type::Arrow) {
+                //this will always find something
+                auto index = std::find_if(state.player, state.player + 4, [&cell](const GameState::game_state::player_state& pl) {
+                    return pl.pos[0] == cell.x && pl.pos[1] == cell.y;
+                }) - state.player;
+                
+                SEND_EVENT("TriggerArrow", &mState.players()[index]);
+            }
+            
+            delete cell.pBonus;
+        } else if(state_cell.has_bonus && state_cell.bonus_type == Bonus::Type::Arrow) {
+            if(cell.pBonus->getData() != state_cell.bonus_data) {
+                SEND_EVENT("RotateArrow", cell.pBonus);
+            }
+        }
+        
+        //Always sets the new data
+        if(state_cell.has_bonus)
+            cell.pBonus->setData(state_cell.bonus_data);
+    }
+}
+
+void ClientConnection::sendDirection(Direction dir)
+{
+    mSocket.sendBytes(&dir, sizeof(dir));
 }
