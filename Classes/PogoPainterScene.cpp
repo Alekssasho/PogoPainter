@@ -103,15 +103,13 @@ bool PogoPainter::init()
     this->addChild(label, 1);
 
 
-    //TODO: make this resolution independant
     auto indicator = Sprite::create("General/indicator.png");
 
-    indicator->setPosition(Vec2(visibleSize.width / 2, (visibleSize.height - 8 * cellSize) / 2.0));
+    indicator->setPosition(Vec2(visibleSize.width / 2, (visibleSize.height - 8 * cellSize - 8 + offset.y) / 2.0));
     indicator->setScale(visibleSize.width / indicator->getContentSize().width,
-        (visibleSize.height - 8 * cellSize) / indicator->getContentSize().height);
+        (visibleSize.height - 8 * cellSize - 8 + offset.y) / indicator->getContentSize().height);
 
     indicator->setOpacity(175);
-    indicator->setPosition(indicator->getPosition() - Vec2(0, cellSize - 24));
     this->addChild(indicator);
 
 
@@ -161,7 +159,19 @@ bool PogoPainter::init()
     ADD_DELEGATE("RemoveBonus", [this](EventCustom* e) {
         auto pBonus = static_cast<Bonus*>(e->getUserData());
         
+        std::string musicFile("Sounds/");
+        switch(pBonus->type) {
+            case Bonus::Type::Checkpoint:
+                musicFile += "checkpoint.wav";
+                break;
+            case Bonus::Type::Arrow:
+                musicFile += "arrow.wav";
+                break;
+            default:
+                break;
+        }
         
+        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(musicFile.c_str());
         
         this->removeChildByTag(pBonus->cell.x + pBonus->cell.y * Board::boardSize);
     });

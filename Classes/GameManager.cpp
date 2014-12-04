@@ -311,12 +311,18 @@ void ClientConnection::deserializeAndSendEvents()
         }
         cell.color = state_cell.color;
         
-        //Handle bonuses
-        if (state_cell.has_bonus && !cell.pBonus) {
-            cell.pBonus = BonusInitializers.at(state_cell.bonus_type)(cell);
-            SEND_EVENT("NewBonus", cell.pBonus);
-        } else if (!state_cell.has_bonus && cell.pBonus) {
-            //TODO: Add sound effect
+        if(state_cell.has_bonus) {
+            if(!cell.pBonus) {
+                cell.pBonus = BonusInitializers.at(state_cell.bonus_type)(cell);
+                SEND_EVENT("NewBonus", cell.pBonus);
+            } else if(state_cell.bonus_type == Bonus::Type::Arrow) {
+                if(cell.pBonus->getData() != state_cell.bonus_data) {
+                    SEND_EVENT("RotateArrow", cell.pBonus);
+                }
+            }
+            
+            cell.pBonus->setData(state_cell.bonus_data);
+        } else if (cell.pBonus) {
             SEND_EVENT("RemoveBonus", cell.pBonus);
             
             if(cell.pBonus->type == Bonus::Type::Arrow) {
@@ -329,15 +335,7 @@ void ClientConnection::deserializeAndSendEvents()
             }
             
             delete cell.pBonus;
-        } else if(state_cell.has_bonus && state_cell.bonus_type == Bonus::Type::Arrow) {
-            if(cell.pBonus->getData() != state_cell.bonus_data) {
-                SEND_EVENT("RotateArrow", cell.pBonus);
-            }
         }
-        
-        //Always sets the new data
-        if(state_cell.has_bonus)
-            cell.pBonus->setData(state_cell.bonus_data);
     }
 }
 
