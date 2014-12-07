@@ -93,7 +93,6 @@ class GameServer
     int mTicks;
     GameState mState;
 
-    std::chrono::time_point<std::chrono::system_clock, std::chrono::system_clock::duration> tickStart;
     static const float tickDelay;
     const int mTimer;
     
