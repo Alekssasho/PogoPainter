@@ -58,8 +58,8 @@ class GameServer;
 
 class ServerConnection: public Poco::Net::TCPServerConnection
 {
-    friend class GameServer;
     GameServer * server;
+
 public:
     ServerConnection(const Poco::Net::StreamSocket& s);
 
@@ -69,16 +69,23 @@ public:
 
 class GameServer
 {
+    struct PlayerData {
+        Color color;
+        Vec2 pos;
+        Direction dir;
+    };
+
     const int mMaxClients;
     const int mRemoteClients;
     std::unordered_map<std::string, std::pair<int, Player*>> mClinets;
     Poco::Net::TCPServer * server;
     std::unique_ptr<Poco::Net::TCPServerConnectionFactoryImpl<ServerConnection>> factory;
 
+    const std::unordered_map<Color, PlayerData> playerData;
     std::vector<bool> mAlive;
     
     std::mutex mPingLock;
-    std::mutex mWaitMutex;
+    std::mutex mSendMutex;
     std::condition_variable mCanSendState;
 
     static GameServer * self;
@@ -86,12 +93,18 @@ class GameServer
     int mTicks;
     GameState mState;
 
+    std::chrono::time_point<std::chrono::system_clock, std::chrono::system_clock::duration> tickStart;
     static const float tickDelay;
     const int mTimer;
+    
+    void GameServer::addAiPlayer(Color color);
 public:
     static GameServer * getServer() { return GameServer::self; }
 
     enum Status { Waiting, Running, Stopped } status;
+
+    GameServer(const GameServer &) = delete;
+    GameServer & operator=(const GameServer &) = delete;
     
     GameServer(int gameTime = 90, int clients = 4);
     ~GameServer();
@@ -102,15 +115,21 @@ public:
     void ping(const std::string & ip);
 
     // every connection calls this to wait before sending data
-    void waitToSend();
+    void waitToSend(std::function<bool()> until);
+    int getThisTick() { return mState.ticks(); }
 
     void addClient(const std::string & ip);
+    void removeClient(const std::string & ip);
+    void replaceClient(const std::string & ip);
 
     void update(float deltaTime);
 
     GameState::game_state & getGameState();
     GameState::game_state::player_state & getPlayerState(const std::string & ip);
 
+    std::chrono::milliseconds getTickDelay() { return std::chrono::milliseconds(static_cast<int>(tickDelay * 1000)); }
+    std::chrono::milliseconds getReceiveTime() { return std::chrono::milliseconds(static_cast<int>(static_cast<float>(getTickDelay().count()) * 0.9)); }
+    std::chrono::milliseconds getSendTime() { return getTickDelay() - getReceiveTime(); }
 };
 
 #endif /* defined(__PogoPainter__PPGameManager__) */

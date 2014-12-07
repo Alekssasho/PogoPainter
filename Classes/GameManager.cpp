@@ -31,46 +31,47 @@ const int gPortNumber = 8126;
 using namespace Poco::Net;
 GameServer * GameServer::self = nullptr;
 
-struct PlayerData {
-    Color color;
-    Vec2 pos;
-    Direction dir;
-};
+
 
 
 GameServer::GameServer(int gameTime, int clients)
-: factory(new TCPServerConnectionFactoryImpl<ServerConnection>()), mMaxClients(4), mRemoteClients(clients), mAlive(mRemoteClients, false), mTimer(gameTime)
+: factory(new TCPServerConnectionFactoryImpl<ServerConnection>()), mMaxClients(4), mRemoteClients(clients), mAlive(mRemoteClients, false), mTimer(gameTime),
+playerData({
+    make_pair(Color::Red, PlayerData{ Color::Red, Vec2(0, 0), Direction::Up }),
+    make_pair(Color::Green, PlayerData{ Color::Green, Vec2(0, 7), Direction::Right }),
+    make_pair(Color::Blue, PlayerData{ Color::Blue, Vec2(7, 0), Direction::Down }),
+    make_pair(Color::Yellow, PlayerData{ Color::Yellow, Vec2(7, 7), Direction::Left })
+})
 {
-    static const std::vector<PlayerData> playerData = {
-        { Color::Red, Vec2(0, 0), Direction::Up },
-        { Color::Green, Vec2(0, 7), Direction::Right },
-        { Color::Blue, Vec2(7, 0), Direction::Down },
-        { Color::Yellow, Vec2(7, 7), Direction::Left }
-    };
-
     int c;
-    for (c = 0; c < clients; ++c) {
-        auto player = new ServerPlayer;
-        player->color = playerData[c].color;
-        player->pos = playerData[c].pos;
-        player->currentDirection = playerData[c].dir;
+    auto player_data = playerData.begin();
 
+    for (c = 0; c < clients; ++c, ++player_data) {
+        auto player = new ServerPlayer;
+        player->color = player_data->second.color;
+        player->pos = player_data->second.pos;
+        player->currentDirection = player_data->second.dir;
         mState.players().push_back(PlayerPtr(player));
     }
 
-    for (; c < 4; ++c) {
-        auto pAi = new StupidAiPlayer;
-        pAi->color = playerData[c].color;
-        pAi->currentDirection = playerData[c].dir;
-        pAi->pos = playerData[c].pos;
-        mState.players().push_back(PlayerPtr(pAi));
+    for (; c < 4; ++c, ++player_data) {
+        addAiPlayer(player_data->second.color);
     }
-
 
     GameServer::self = this;
     ServerSocket sock(SocketAddress(IPAddress(), gPortNumber));
     server = new TCPServer(&*factory, sock);
     server->start();
+}
+
+void GameServer::addAiPlayer(Color color)
+{
+    const auto & pData = playerData.at(color);
+    auto pAi = new StupidAiPlayer;
+    pAi->color = color;
+    pAi->currentDirection = pData.dir;
+    pAi->pos = pData.pos;
+    mState.players().push_back(PlayerPtr(pAi));
 }
 
 GameServer::~GameServer()
@@ -79,18 +80,38 @@ GameServer::~GameServer()
     delete server;
 }
 
-void GameServer::waitToSend()
+void GameServer::waitToSend(function<bool()> until)
 {
-    unique_lock<mutex> unqLock(mWaitMutex);
-    mCanSendState.wait(unqLock, [this] {
-        return this->mRemoteClients == count(mAlive.begin(), mAlive.end(), true);
-    });
+    unique_lock<mutex> unqLock(mSendMutex);
+    mCanSendState.wait(unqLock, until);
 }
 
 void GameServer::addClient(const std::string & ip)
 {
     if (mClinets.find(ip) == mClinets.end()) {
         mClinets[ip] = make_pair(server->currentConnections(), nullptr);
+    }
+}
+
+void GameServer::removeClient(const std::string & ip)
+{
+    if (status == Running) {
+        replaceClient(ip);
+    } else {
+        auto cl = mClinets.find(ip);
+        if (cl != mClinets.end()) {
+            mClinets.erase(cl);
+        }
+    }
+}
+
+void GameServer::replaceClient(const std::string & ip)
+{
+    auto cl = mClinets.find(ip);
+    if (cl != mClinets.end()) {
+        auto removedColor = cl->second.second->color;
+        mClinets.erase(cl);
+        addAiPlayer(removedColor);
     }
 }
 
@@ -111,8 +132,6 @@ bool GameServer::startGame()
     }
     fill(mAlive.begin(), mAlive.end(), false);
     status = Running;
-    // wait for all connections to go waiting on condvar
-    this_thread::sleep_for(std::chrono::milliseconds(100));
     mCanSendState.notify_all();
     
     return true;
@@ -134,6 +153,7 @@ void GameServer::update(float deltaTime)
     fill(mAlive.begin(), mAlive.end(), false);
 
     mState.incrementTick();
+
     mState.serialize();
     int ticks = mState.ticks();
 
@@ -179,6 +199,9 @@ void GameServer::update(float deltaTime)
             pBonus->update(mState);
         }
     }
+
+    // time to send clients the state
+    mCanSendState.notify_all();
 }
 
 void GameServer::ping(const std::string & ip)
@@ -192,6 +215,9 @@ ServerConnection::ServerConnection(const StreamSocket & s): Poco::Net::TCPServer
 
 void ServerConnection::run()
 {
+    // Why? So MSVC is not sad.
+    auto * server = this->server;
+
     StreamSocket& ss = socket();
     if (server->status == GameServer::Running) {
         return;
@@ -199,47 +225,57 @@ void ServerConnection::run()
     const auto & ip = ss.address().host().toString();
     server->addClient(ip);
 
-    std::chrono::milliseconds snooze_time(10), sleep_time(300);
+    // I can't make this work - I give up
+    //auto deleter = [&ip](GameServer * s) { s->removeClient(ip); };
+    //unique_ptr<GameServer *, decltype(deleter)> unregister(server, deleter);
 
     auto * myState = &server->getPlayerState(ip);
     auto * gameState = &server->getGameState();
+    
+    auto receiveDuration(server->getReceiveTime());
 
-    try {
-        while (server->status == GameServer::Waiting) {
-            ss.sendBytes(myState, sizeof(*myState));
-            this_thread::sleep_for(snooze_time);
-        }
-
-        server->waitToSend();
-        
-        while (server->status == GameServer::Running) {
-            if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*gameState)) {
-                throw 42;
-            }
-
-            unsigned char data[sizeof(*myState)];
-            int received = 0;
-
-            for (;;) {
-                int got = ss.receiveBytes(myState, sizeof(*myState) - received);
-                if (!got) {
-                    // graceful shutdown from peer
-                    return;
-                }
-                memcpy(reinterpret_cast<void*>(myState + received), data, got);
-                received += got;
-            }            
-            
-            // if we'r not the last pinger wait for everyone
-            server->ping(ip);
-            server->waitToSend();
-        }
-
-    } catch (Poco::Exception &) {
-        
-    } catch (int) {
-
+    Poco::Timespan sendTimeout(0, chrono::duration_cast<chrono::microseconds>(server->getSendTime()).count());
+    ss.setSendTimeout(sendTimeout);
+   
+ 
+    if (ss.sendBytes(myState, sizeof(*myState)) != sizeof(*myState)) {
+        server->removeClient(ip);
     }
+
+    // wait for the game to start
+    server->waitToSend([server] () {
+        return server->status == GameServer::Running;
+    });
+        
+    while (server->status == GameServer::Running) {
+        auto gotResponse = false;
+        auto thisTick = server->getThisTick();
+
+        auto stop = chrono::system_clock::now() + receiveDuration;
+        while (stop < chrono::system_clock::now()) {
+            if (ss.available() >= sizeof(*myState)) {
+                gotResponse = 0 != ss.receiveBytes(myState, sizeof(*myState));
+            }
+        }
+
+        if (!gotResponse) {
+            break;
+        }
+
+        if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*myState)) {
+            break;
+        }
+
+        server->ping(ip);
+
+        // wait for next tick
+        server->waitToSend([server, &thisTick] () {
+            return server->getThisTick() == thisTick + 1;
+        });
+    }
+
+
+    server->removeClient(ip);
 }
 
 ClientConnection::ClientConnection(const std::string& ipaddrs, int time)
@@ -265,7 +301,7 @@ void ClientConnection::gameStarted()
         this->sendDirection(*pDir);
     });
 
-    int size = sizeof(GameState::state);
+    const int size = sizeof(GameState::game_state);
     char data[size];
     int received = 0;
     int got = 0;

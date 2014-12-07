@@ -49,6 +49,8 @@ bool PogoPainter::init()
         return false;
     }
 
+    GameServer * server = new GameServer();
+
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
