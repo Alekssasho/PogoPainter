@@ -215,9 +215,6 @@ ServerConnection::ServerConnection(const StreamSocket & s): Poco::Net::TCPServer
 
 void ServerConnection::run()
 {
-    // Why? So MSVC is not sad.
-    auto * server = this->server;
-
     StreamSocket& ss = socket();
     if (server->status == GameServer::Running) {
         return;
@@ -225,12 +222,12 @@ void ServerConnection::run()
     const auto & ip = ss.address().host().toString();
     server->addClient(ip);
 
-    // I can't make this work - I give up
-    //auto deleter = [&ip](GameServer * s) { s->removeClient(ip); };
-    //unique_ptr<GameServer *, decltype(deleter)> unregister(server, deleter);
+    // will unregister player on function exit
+    auto deleter = [&ip](GameServer * s) { s->removeClient(ip); };
+    unique_ptr<GameServer, decltype(deleter)> unregister(server, deleter);
 
-    auto * myState = &server->getPlayerState(ip);
-    auto * gameState = &server->getGameState();
+    auto myState = &server->getPlayerState(ip);
+    auto gameState = &server->getGameState();
     
     auto receiveDuration(server->getReceiveTime());
 
@@ -243,9 +240,14 @@ void ServerConnection::run()
     }
 
     // wait for the game to start
-    server->waitToSend([server] () {
-        return server->status == GameServer::Running;
+    server->waitToSend([this] () {
+        return this->server->status == GameServer::Running;
     });
+
+    // notifies all clients that game started
+    if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*myState)) {
+        return;
+    }
         
     while (server->status == GameServer::Running) {
         auto gotResponse = false;
@@ -259,23 +261,20 @@ void ServerConnection::run()
         }
 
         if (!gotResponse) {
-            break;
+            return;
         }
 
         if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*myState)) {
-            break;
+            return;
         }
 
         server->ping(ip);
 
         // wait for next tick
-        server->waitToSend([server, &thisTick] () {
-            return server->getThisTick() == thisTick + 1;
+        server->waitToSend([this, &thisTick] () {
+            return this->server->getThisTick() == thisTick + 1;
         });
     }
-
-
-    server->removeClient(ip);
 }
 
 ClientConnection::ClientConnection(const std::string& ipaddrs, int time)

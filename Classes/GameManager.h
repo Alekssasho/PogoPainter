@@ -81,7 +81,7 @@ class GameServer
     Poco::Net::TCPServer * server;
     std::unique_ptr<Poco::Net::TCPServerConnectionFactoryImpl<ServerConnection>> factory;
 
-    const std::unordered_map<Color, PlayerData> playerData;
+    const std::unordered_map<Color, PlayerData, std::hash<int>> playerData;
     std::vector<bool> mAlive;
     
     std::mutex mPingLock;
@@ -96,7 +96,7 @@ class GameServer
     static const float tickDelay;
     const int mTimer;
     
-    void GameServer::addAiPlayer(Color color);
+    void addAiPlayer(Color color);
 public:
     static GameServer * getServer() { return GameServer::self; }
 
