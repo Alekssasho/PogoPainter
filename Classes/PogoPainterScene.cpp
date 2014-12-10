@@ -52,8 +52,6 @@ bool PogoPainter::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    manager.init();
-
     textures[Color::Blue] = Director::getInstance()->getTextureCache()->addImage("Cell/cell_blue.png");
     textures[Color::Red] = Director::getInstance()->getTextureCache()->addImage("Cell/cell_red.png");
     textures[Color::Yellow] = Director::getInstance()->getTextureCache()->addImage("Cell/cell_yellow.png");
@@ -141,9 +139,9 @@ bool PogoPainter::init()
     ADD_DELEGATE("NewBonus", [this](EventCustom* e) {
         auto pBonus = static_cast<Bonus*>(e->getUserData());
         Sprite* pSprite = nullptr;
-        if (dynamic_cast<Checkpoint*>(pBonus)) {
+        if (pBonus->type == Bonus::Type::Checkpoint) {
             pSprite = Sprite::create("Bonuses/bonus_checkpoint.png");
-        } else if (dynamic_cast<Arrow*>(pBonus)) {
+        } else if (pBonus->type == Bonus::Type::Arrow) {
             pSprite = Sprite::create("Bonuses/bonus_arrow.png");
         }
 
@@ -304,6 +302,9 @@ bool PogoPainter::init()
 }
 
 void PogoPainter::gameTick(float dt) {
+    
+    GameServer::getServer()->update(dt);
+    
     int timer = manager.timer();
     int ticks = manager.state().ticks();
     static_cast<Label*>(this->getChildByTag(4200))->setString("Timer: " + to_string((timer - ticks) / 2));
@@ -329,8 +330,6 @@ void PogoPainter::gameTick(float dt) {
         return;
     }
 
-    manager.update(dt);
-
     auto& players = manager.state().players();
 
     //Init animation for players
@@ -347,6 +346,10 @@ void PogoPainter::gameTick(float dt) {
 
 
     //Handle line above
+    
+    if (players.size() == 0) {
+        return;
+    }
 
     int maxPoints = std::accumulate(players.begin(), players.end(), 0, [](const int acc, const PlayerPtr& pPl) {
         return acc + pPl->points;
@@ -386,6 +389,20 @@ void PogoPainter::update(float dt)
 {
     if (!mInit) {
         this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), GameManager::tickDelay);
+        
+        new GameServer(90, 1);
+        
+        std::thread client(&ClientConnection::registerWithServer, &manager);
+        client.detach();
+        
+        while(!manager.started)
+            ;
+        
+        if(!GameServer::getServer()->startGame()) {
+            Director::getInstance()->end();
+            exit(1);
+            return;
+        }
         mInit = true;
     }
 }

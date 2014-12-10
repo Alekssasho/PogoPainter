@@ -60,8 +60,6 @@ void BonusManager::update(GameState& state)
         }
         checkpoints.push_back(BonusPtr(new Checkpoint(board[pos])));
         board[pos].pBonus = checkpoints.back().get();
-        
-        SEND_EVENT("NewBonus", board[pos].pBonus);
     }
     
     static unsigned int step2 = 0;
@@ -89,8 +87,6 @@ void BonusManager::update(GameState& state)
         
         bonuses.push_back(BonusPtr(bonus));
         board[pos].pBonus = bonus;
-        
-        SEND_EVENT("NewBonus", board[pos].pBonus);
     }
 }
 

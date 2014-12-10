@@ -37,12 +37,14 @@ protected:
 
 struct ServerPlayer : public Player 
 {
+    ServerPlayer() {}
+    ServerPlayer(Vec2 p, Color c, Direction initialDirection)
+    {
+        color = c;
+        pos = p;
+        currentDirection = initialDirection;
+    }
     Direction getDirection() override { return currentDirection; };
-
-    Vec2 pos;
-    Direction currentDirection;
-    int points = 0;
-    Color color;
 };
 
 #endif /* defined(__PogoPainter__SpecificPlayers__) */

@@ -43,15 +43,23 @@ class ClientConnection
 {
 public:
     ClientConnection(const std::string& ipaddres = "127.0.0.1", int time = 90);
-    void sendDirection(Direction dir);
-private:
+    void sendPlayerState();
+    GameState& state() { return mState; }
+    int timer() const { return mTimer; }
     void registerWithServer();
+    bool started = false;
+private:
+    void registerPlayers();
     void gameStarted();
     void deserializeAndSendEvents();
     
     Poco::Net::StreamSocket mSocket;
     GameState mState;
     const int mTimer;
+    
+    std::string ipAddress;
+    
+    GameState::game_state::player_state mPlayer;
 };
 
 class GameServer;
@@ -81,7 +89,7 @@ class GameServer
     Poco::Net::TCPServer * server;
     std::unique_ptr<Poco::Net::TCPServerConnectionFactoryImpl<ServerConnection>> factory;
 
-    const std::unordered_map<Color, PlayerData, std::hash<int>> playerData;
+    const std::vector<std::pair<Color, PlayerData>> playerData;
     std::vector<bool> mAlive;
     
     std::mutex mPingLock;
@@ -100,7 +108,7 @@ class GameServer
 public:
     static GameServer * getServer() { return GameServer::self; }
 
-    enum Status { Waiting, Running, Stopped } status;
+    enum Status { Waiting, Running, Stopped } status = Status::Waiting;
 
     GameServer(const GameServer &) = delete;
     GameServer & operator=(const GameServer &) = delete;

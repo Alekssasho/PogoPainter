@@ -1,4 +1,4 @@
-//
+ //
 //  PPGameManager.cpp
 //  PogoPainter
 //
@@ -39,8 +39,8 @@ GameServer::GameServer(int gameTime, int clients)
 playerData({
     make_pair(Color::Red, PlayerData{ Color::Red, Vec2(0, 0), Direction::Up }),
     make_pair(Color::Green, PlayerData{ Color::Green, Vec2(0, 7), Direction::Right }),
-    make_pair(Color::Blue, PlayerData{ Color::Blue, Vec2(7, 0), Direction::Down }),
-    make_pair(Color::Yellow, PlayerData{ Color::Yellow, Vec2(7, 7), Direction::Left })
+    make_pair(Color::Blue, PlayerData{ Color::Blue, Vec2(7, 7), Direction::Down }),
+    make_pair(Color::Yellow, PlayerData{ Color::Yellow, Vec2(7, 0), Direction::Left })
 })
 {
     int c;
@@ -57,6 +57,8 @@ playerData({
     for (; c < 4; ++c, ++player_data) {
         addAiPlayer(player_data->second.color);
     }
+    
+    mState.serialize();
 
     GameServer::self = this;
     ServerSocket sock(SocketAddress(IPAddress(), gPortNumber));
@@ -66,7 +68,7 @@ playerData({
 
 void GameServer::addAiPlayer(Color color)
 {
-    const auto & pData = playerData.at(color);
+    const auto & pData = playerData[color].second;
     auto pAi = new StupidAiPlayer;
     pAi->color = color;
     pAi->currentDirection = pData.dir;
@@ -89,13 +91,13 @@ void GameServer::waitToSend(function<bool()> until)
 void GameServer::addClient(const std::string & ip)
 {
     if (mClinets.find(ip) == mClinets.end()) {
-        mClinets[ip] = make_pair(server->currentConnections(), nullptr);
+        mClinets[ip] = make_pair(server->currentConnections() - 1, nullptr);
     }
 }
 
 void GameServer::removeClient(const std::string & ip)
 {
-    if (status == Running) {
+    if (status == Status::Running) {
         replaceClient(ip);
     } else {
         auto cl = mClinets.find(ip);
@@ -109,7 +111,7 @@ void GameServer::replaceClient(const std::string & ip)
 {
     auto cl = mClinets.find(ip);
     if (cl != mClinets.end()) {
-        auto removedColor = cl->second.second->color;
+        auto removedColor = mState.state.player[cl->second.first].color;
         mClinets.erase(cl);
         addAiPlayer(removedColor);
     }
@@ -131,7 +133,7 @@ bool GameServer::startGame()
         return false;
     }
     fill(mAlive.begin(), mAlive.end(), false);
-    status = Running;
+    status = Status::Running;
     mCanSendState.notify_all();
     
     return true;
@@ -139,12 +141,12 @@ bool GameServer::startGame()
 
 void GameServer::stopGame()
 {
-    status = Stopped;
+    status = Status::Stopped;
 }
 
 void GameServer::update(float deltaTime)
 {
-    unique_lock<mutex> lock(mPingLock);
+    lock_guard<mutex> lock(mPingLock);
 
     if (any_of(mAlive.begin(), mAlive.end(), [](const bool & alive) { return !alive; })) {
         // handle someone not responding
@@ -206,7 +208,7 @@ void GameServer::update(float deltaTime)
 
 void GameServer::ping(const std::string & ip)
 {
-    unique_lock<mutex> lock(mPingLock);
+    lock_guard<mutex> lock(mPingLock);
     mAlive[mClinets[ip].first] = true;
 }
 
@@ -216,7 +218,7 @@ ServerConnection::ServerConnection(const StreamSocket & s): Poco::Net::TCPServer
 void ServerConnection::run()
 {
     StreamSocket& ss = socket();
-    if (server->status == GameServer::Running) {
+    if (server->status == GameServer::Status::Running) {
         return;
     }
     const auto & ip = ss.address().host().toString();
@@ -241,15 +243,15 @@ void ServerConnection::run()
 
     // wait for the game to start
     server->waitToSend([this] () {
-        return this->server->status == GameServer::Running;
+        return this->server->status == GameServer::Status::Running;
     });
 
     // notifies all clients that game started
-    if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*myState)) {
+    if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*gameState)) {
         return;
     }
         
-    while (server->status == GameServer::Running) {
+    while (server->status == GameServer::Status::Running) {
         auto gotResponse = false;
         auto thisTick = server->getThisTick();
 
@@ -260,11 +262,11 @@ void ServerConnection::run()
             }
         }
 
-        if (!gotResponse) {
-            return;
-        }
+//        if (!gotResponse) {
+//            return;
+//        }
 
-        if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*myState)) {
+        if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*gameState)) {
             return;
         }
 
@@ -278,16 +280,20 @@ void ServerConnection::run()
 }
 
 ClientConnection::ClientConnection(const std::string& ipaddrs, int time)
-: mSocket(SocketAddress(ipaddrs, gPortNumber)), mTimer(time)
+: mSocket(), mTimer(time), ipAddress(ipaddrs)
 {
-    this->registerWithServer();
+    this->registerPlayers();
 }
 
 void ClientConnection::registerWithServer()
 {
-    //TODO: init sequance with server
+    mSocket.connect(SocketAddress(ipAddress, gPortNumber));
+    while(mSocket.available() != sizeof(mPlayer))
+        ;
+    mSocket.receiveBytes(&mPlayer, sizeof(mPlayer));
+    mSocket.sendBytes(&mPlayer, sizeof(mPlayer));
     
-    //TODO: receive signal from server to start game
+    started = true;
     this->gameStarted();
 }
 
@@ -297,7 +303,8 @@ void ClientConnection::gameStarted()
     ADD_DELEGATE("Swipe", [this](EventCustom* e) {
         auto pDir = static_cast<Direction*>(e->getUserData());
         
-        this->sendDirection(*pDir);
+        mPlayer.dir = *pDir;
+        this->sendPlayerState();
     });
 
     const int size = sizeof(GameState::game_state);
@@ -306,6 +313,7 @@ void ClientConnection::gameStarted()
     int got = 0;
     //Server will tell us to stop the game  when it is finished
     while(true) {
+        this->sendPlayerState();
         while(received != size) {
             got = mSocket.receiveBytes(&data, size - received);
             
@@ -316,7 +324,17 @@ void ClientConnection::gameStarted()
         received = 0;
         
         this->deserializeAndSendEvents();
+        if(mState.ticks() == mTimer)
+            return;
     }
+}
+
+void ClientConnection::registerPlayers()
+{
+    mState.players().push_back(PlayerPtr(new ServerPlayer(Vec2(0, 0), Color::Red, Direction::Up)));
+    mState.players().push_back(PlayerPtr(new ServerPlayer(Vec2(0, 7), Color::Green, Direction::Right)));
+    mState.players().push_back(PlayerPtr(new ServerPlayer(Vec2(7, 7), Color::Blue, Direction::Down)));
+    mState.players().push_back(PlayerPtr(new ServerPlayer(Vec2(7, 0), Color::Yellow, Direction::Left)));
 }
 
 void ClientConnection::deserializeAndSendEvents()
@@ -370,11 +388,12 @@ void ClientConnection::deserializeAndSendEvents()
             }
             
             delete cell.pBonus;
+            cell.pBonus = nullptr;
         }
     }
 }
 
-void ClientConnection::sendDirection(Direction dir)
+void ClientConnection::sendPlayerState()
 {
-    mSocket.sendBytes(&dir, sizeof(dir));
+    mSocket.sendBytes(&mPlayer, sizeof(mPlayer));
 }
