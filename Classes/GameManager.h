@@ -16,6 +16,7 @@
 #include <memory>
 #include <condition_variable>
 #include <mutex>
+#include <atomic>
 
 #include "Poco/Net/TCPServer.h"
 #include "Poco/Net/TCPServerConnection.h"
@@ -47,11 +48,12 @@ public:
     GameState& state() { return mState; }
     int timer() const { return mTimer; }
     void registerWithServer();
-    bool started = false;
+    void deserializeAndSendEvents();
+    
+    std::atomic<bool> started;
 private:
     void registerPlayers();
     void gameStarted();
-    void deserializeAndSendEvents();
     
     Poco::Net::StreamSocket mSocket;
     GameState mState;

@@ -20,7 +20,6 @@ string to_string(const T& t) {
 }
 #endif
 
-
 Scene* PogoPainter::createScene()
 {
     // 'scene' is an autorelease object
@@ -126,6 +125,8 @@ bool PogoPainter::init()
         case Left:
             spriteRotateAngle += 180;
             break;
+        case Right:
+            break;
         default:
             return;
         }
@@ -208,61 +209,61 @@ bool PogoPainter::init()
         auto pBonus = static_cast<Bonus*>(e->getUserData());
         this->getChildByTag(pBonus->cell.x + pBonus->cell.y * Board::boardSize)->runAction(RotateBy::create(GameManager::tickDelay / 2, 90));
     });
-
+    
     ADD_DELEGATE("TriggerArrow", [this](EventCustom* e) {
-        auto pPl = static_cast<Player*>(e->getUserData());
-        auto dir = static_cast<Arrow*>(this->manager.state().board()[pPl->pos].pBonus)->dir;
-        auto pos = pPl->pos;
-        auto color = pPl->color;
-
+        auto pBonus = static_cast<Arrow*>(e->getUserData());
+        auto pos = Vec2(pBonus->cell.x, pBonus->cell.y);
+        auto dir = pBonus->dir;
+        auto color = pBonus->cell.color;
+        
         switch (dir) {
-        case Left:
-            for (int c = pos.x; c >= 0; --c) {
-                int y = pos.y;
-                SPRITE_CELL(Vec2(c, pos.y))->runAction(
-                    Sequence::createWithTwoActions(
-                    DelayTime::create(0.05f * (pos.x - c)),
-                    CallFunc::create([color, y, c, this] {
-                    SPRITE_CELL(Vec2(c, y))->setTexture(this->textures[color]);
-                })));
-            }
-            break;
-        case Up:
-            for (int c = pos.y; c < Board::boardSize; ++c) {
-                int x = pos.x;
-                SPRITE_CELL(Vec2(pos.x, c))->runAction(
-                    Sequence::createWithTwoActions(
-                    DelayTime::create(0.05f * (c - pos.y)),
-                    CallFunc::create([color, this, x, c] {
-                    SPRITE_CELL(Vec2(x, c))->setTexture(this->textures[color]);
-                })));
-            }
-            break;
-        case Right:
-            for (int c = pos.x; c < Board::boardSize; ++c) {
-                int y = pos.y;
-                SPRITE_CELL(Vec2(c, pos.y))->runAction(
-                    Sequence::createWithTwoActions(
-                    DelayTime::create(0.05f * (c - pos.x)),
-                    CallFunc::create([color, this, y, c] {
-                    SPRITE_CELL(Vec2(c, y))->setTexture(this->textures[color]);
-                })));
-            }
-            break;
-        case Down:
-            for (int c = pos.y; c >= 0; --c) {
-                int x = pos.x;
-                SPRITE_CELL(Vec2(pos.x, c))->runAction(
-                    Sequence::createWithTwoActions(
-                    DelayTime::create(0.05f * (pos.y - c)),
-                    CallFunc::create([color, this, x, c] {
-                    SPRITE_CELL(Vec2(x, c))->setTexture(this->textures[color]);
-                })));
-
-            }
-            break;
-        default:
-            break;
+            case Left:
+                for (int c = pos.x; c >= 0; --c) {
+                    int y = pos.y;
+                    SPRITE_CELL(Vec2(c, pos.y))->runAction(
+                                                           Sequence::createWithTwoActions(
+                                                                                          DelayTime::create(0.05f * (pos.x - c)),
+                                                                                          CallFunc::create([color, y, c, this] {
+                                                               SPRITE_CELL(Vec2(c, y))->setTexture(this->textures[color]);
+                                                           })));
+                }
+                break;
+            case Up:
+                for (int c = pos.y; c < Board::boardSize; ++c) {
+                    int x = pos.x;
+                    SPRITE_CELL(Vec2(pos.x, c))->runAction(
+                                                           Sequence::createWithTwoActions(
+                                                                                          DelayTime::create(0.05f * (c - pos.y)),
+                                                                                          CallFunc::create([color, this, x, c] {
+                                                               SPRITE_CELL(Vec2(x, c))->setTexture(this->textures[color]);
+                                                           })));
+                }
+                break;
+            case Right:
+                for (int c = pos.x; c < Board::boardSize; ++c) {
+                    int y = pos.y;
+                    SPRITE_CELL(Vec2(c, pos.y))->runAction(
+                                                           Sequence::createWithTwoActions(
+                                                                                          DelayTime::create(0.05f * (c - pos.x)),
+                                                                                          CallFunc::create([color, this, y, c] {
+                                                               SPRITE_CELL(Vec2(c, y))->setTexture(this->textures[color]);
+                                                           })));
+                }
+                break;
+            case Down:
+                for (int c = pos.y; c >= 0; --c) {
+                    int x = pos.x;
+                    SPRITE_CELL(Vec2(pos.x, c))->runAction(
+                                                           Sequence::createWithTwoActions(
+                                                                                          DelayTime::create(0.05f * (pos.y - c)),
+                                                                                          CallFunc::create([color, this, x, c] {
+                                                               SPRITE_CELL(Vec2(x, c))->setTexture(this->textures[color]);
+                                                           })));
+                    
+                }
+                break;
+            default:
+                break;
         }
     });
 
@@ -302,8 +303,9 @@ bool PogoPainter::init()
 }
 
 void PogoPainter::gameTick(float dt) {
-    
+    manager.deserializeAndSendEvents();
     GameServer::getServer()->update(dt);
+    
     
     int timer = manager.timer();
     int ticks = manager.state().ticks();
@@ -421,8 +423,8 @@ void PogoPainter::attachPlayers() {
     static std::unordered_map<Color, player_info, std::hash<unsigned char>> player_data;
 
     player_data[Color::Red] = { -(45 + 90), "Player/player_red.png", 1 , 100};
-    player_data[Color::Blue] = { 45, "Player/player_blue.png", 5 , 200};
-    player_data[Color::Green] = { -45, "Player/player_green.png", 3 , 300};
+    player_data[Color::Green] = { -45, "Player/player_green.png", 3 , 200};
+    player_data[Color::Blue] = { 45, "Player/player_blue.png", 5 , 300};
     player_data[Color::Yellow] = { -45 + 180, "Player/player_yellow.png", 7 , 400};
 
 

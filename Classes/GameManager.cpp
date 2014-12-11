@@ -32,8 +32,6 @@ using namespace Poco::Net;
 GameServer * GameServer::self = nullptr;
 
 
-
-
 GameServer::GameServer(int gameTime, int clients)
 : factory(new TCPServerConnectionFactoryImpl<ServerConnection>()), mMaxClients(4), mRemoteClients(clients), mAlive(mRemoteClients, false), mTimer(gameTime),
 playerData({
@@ -154,9 +152,10 @@ void GameServer::update(float deltaTime)
     }
     fill(mAlive.begin(), mAlive.end(), false);
 
+    mState.client_deserialize();
+    
     mState.incrementTick();
 
-    mState.serialize();
     int ticks = mState.ticks();
 
 
@@ -201,6 +200,9 @@ void GameServer::update(float deltaTime)
             pBonus->update(mState);
         }
     }
+    
+    
+    mState.serialize();
 
     // time to send clients the state
     mCanSendState.notify_all();
@@ -250,15 +252,17 @@ void ServerConnection::run()
     if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*gameState)) {
         return;
     }
+    
+    auto pPlayerDir = &myState->dir;
         
     while (server->status == GameServer::Status::Running) {
         auto gotResponse = false;
         auto thisTick = server->getThisTick();
 
         auto stop = chrono::system_clock::now() + receiveDuration;
-        while (stop < chrono::system_clock::now()) {
+        while (stop > chrono::system_clock::now()) {
             if (ss.available() >= sizeof(*myState)) {
-                gotResponse = 0 != ss.receiveBytes(myState, sizeof(*myState));
+                gotResponse = 0 != ss.receiveBytes(pPlayerDir, sizeof(*pPlayerDir));
             }
         }
 
@@ -280,7 +284,7 @@ void ServerConnection::run()
 }
 
 ClientConnection::ClientConnection(const std::string& ipaddrs, int time)
-: mSocket(), mTimer(time), ipAddress(ipaddrs)
+: mSocket(), mTimer(time), ipAddress(ipaddrs), started(false)
 {
     this->registerPlayers();
 }
@@ -291,7 +295,7 @@ void ClientConnection::registerWithServer()
     while(mSocket.available() != sizeof(mPlayer))
         ;
     mSocket.receiveBytes(&mPlayer, sizeof(mPlayer));
-    mSocket.sendBytes(&mPlayer, sizeof(mPlayer));
+    this->sendPlayerState();
     
     started = true;
     this->gameStarted();
@@ -313,7 +317,7 @@ void ClientConnection::gameStarted()
     int got = 0;
     //Server will tell us to stop the game  when it is finished
     while(true) {
-        this->sendPlayerState();
+//        this->sendPlayerState();
         while(received != size) {
             got = mSocket.receiveBytes(&data, size - received);
             
@@ -323,7 +327,6 @@ void ClientConnection::gameStarted()
         
         received = 0;
         
-        this->deserializeAndSendEvents();
         if(mState.ticks() == mTimer)
             return;
     }
@@ -342,18 +345,6 @@ void ClientConnection::deserializeAndSendEvents()
     auto& state = mState.state;
     
     mState.setTicks(state.tick);
-    
-    int pid = 0;
-    for (auto & player : mState.players()) {
-        auto & state_player = state.player[pid++];
-        
-        player->color = state_player.color;
-        player->currentDirection = state_player.dir;
-        player->pos = Vec2(state_player.pos[0], state_player.pos[1]);
-        player->points = state_player.points;
-        
-        SEND_EVENT("RotatePlayer", &*player);
-    }
     
     int cell_id = 0;
     
@@ -376,24 +367,30 @@ void ClientConnection::deserializeAndSendEvents()
             
             cell.pBonus->setData(state_cell.bonus_data);
         } else if (cell.pBonus) {
-            SEND_EVENT("RemoveBonus", cell.pBonus);
-            
             if(cell.pBonus->type == Bonus::Type::Arrow) {
-                //this will always find something
-                auto index = std::find_if(state.player, state.player + 4, [&cell](const GameState::game_state::player_state& pl) {
-                    return pl.pos[0] == cell.x && pl.pos[1] == cell.y;
-                }) - state.player;
-                
-                SEND_EVENT("TriggerArrow", &mState.players()[index]);
+                SEND_EVENT("TriggerArrow", cell.pBonus);
             }
             
+            SEND_EVENT("RemoveBonus", cell.pBonus);
             delete cell.pBonus;
             cell.pBonus = nullptr;
         }
+    }
+    
+    int pid = 0;
+    for (auto & player : mState.players()) {
+        auto & state_player = state.player[pid++];
+        
+        player->color = state_player.color;
+        player->currentDirection = state_player.dir;
+        player->pos = Vec2(state_player.pos[0], state_player.pos[1]);
+        player->points = state_player.points;
+        
+        SEND_EVENT("RotatePlayer", &*player);
     }
 }
 
 void ClientConnection::sendPlayerState()
 {
-    mSocket.sendBytes(&mPlayer, sizeof(mPlayer));
+    mSocket.sendBytes(&mPlayer.dir, sizeof(mPlayer.dir));
 }
