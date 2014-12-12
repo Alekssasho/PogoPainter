@@ -261,7 +261,7 @@ void ServerConnection::run()
 
         auto stop = chrono::system_clock::now() + receiveDuration;
         while (stop > chrono::system_clock::now()) {
-            if (ss.available() >= sizeof(*myState)) {
+            if (ss.available() >= sizeof(*pPlayerDir)) {
                 gotResponse = 0 != ss.receiveBytes(pPlayerDir, sizeof(*pPlayerDir));
             }
         }
