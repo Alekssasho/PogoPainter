@@ -43,29 +43,29 @@ endif()
 
 set(GAME_SRC
   Classes/AppDelegate.cpp
+  Classes/Bonuses.cpp
+  Classes/BonusManager.cpp
+  Classes/GameManager.cpp
+  Classes/GameState.cpp
   Classes/PogoPainterMenuScene.cpp
   Classes/PogoPainterResultScene.cpp
   Classes/PogoPainterScene.cpp
-  Classes/BonusManager.cpp
-  Classes/Bonuses.cpp
-  Classes/GameManager.cpp
-  Classes/GameState.cpp
   Classes/SpecificPlayers.cpp
 )
 
 set(GAME_HEADERS
   Classes/AppDelegate.h
-  Classes/PogoPainterMenuScene.h
-  Classes/PogoPainterResultScene.h
-  Classes/PogoPainterScene.h
   Classes/BaseClasses.h
   Classes/Board.h
-  Classes/BonusManager.h
   Classes/Bonuses.h
+  Classes/BonusManager.h
   Classes/Enums.h
   Classes/GameManager.h
   Classes/GameState.h
   Classes/Macros.h
+  Classes/PogoPainterMenuScene.h
+  Classes/PogoPainterResultScene.h
+  Classes/PogoPainterScene.h
   Classes/SpecificPlayers.h
 )
 
@@ -236,6 +236,7 @@ endif()
 if(LINUX)
 link_directories(
   /usr/local/lib
+  ${COCOS2D_ROOT}/../libs/linux
   ${COCOS2D_ROOT}/external/jpeg/prebuilt/linux/${ARCH_DIR}
   ${COCOS2D_ROOT}/external/tiff/prebuilt/linux/${ARCH_DIR}
   ${COCOS2D_ROOT}/external/webp/prebuilt/linux/${ARCH_DIR}
@@ -296,7 +297,10 @@ else()
 add_executable(${APP_NAME} ${GAME_SRC})
 endif()
 
-target_link_libraries(${APP_NAME} cocos2d)
+target_link_libraries(${APP_NAME} cocos2d PocoFoundation PocoNet)
+
+link_directories()
+
 
 set(APP_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 
