@@ -36,7 +36,7 @@ bool PogoPainterMenu::init()
     
     auto eventListener = EventListenerTouchOneByOne::create();
     eventListener->setSwallowTouches(true);
-    
+
     eventListener->onTouchBegan = [](Touch* touch, Event* event) {
         return true;
     };
@@ -53,6 +53,16 @@ bool PogoPainterMenu::init()
     
     registerEventListener(startGameLabel, eventListener);
     
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+    auto keyboardListener = EventListenerKeyboard::create();
+
+    keyboardListener->onKeyPressed = [this](EventKeyboard::KeyCode keyCode, Event* event){
+        Director::getInstance()->getRunningScene()->removeChild(this);
+        Director::getInstance()->getRunningScene()->getChildren().back()->scheduleUpdate();
+    };
+    registerEventListener(startGameLabel, keyboardListener);
+#endif
+
     FadeIn* fadeIn = FadeIn::create(.5f);
     fadeIn->setDuration(1.f);
     FadeOut* fadeOut = FadeOut::create(1.0f);

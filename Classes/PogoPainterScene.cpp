@@ -267,6 +267,38 @@ bool PogoPainter::init()
         }
     });
 
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+    auto keyboardListener = EventListenerKeyboard::create();
+
+    keyboardListener->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event* event){
+
+        Direction dir;
+        switch(keyCode){
+            case EventKeyboard::KeyCode::KEY_LEFT_ARROW:
+            case EventKeyboard::KeyCode::KEY_A:
+                dir = Direction::Left;
+                break;
+            case EventKeyboard::KeyCode::KEY_RIGHT_ARROW:
+            case EventKeyboard::KeyCode::KEY_D:
+                dir = Direction::Right;
+                break;
+            case EventKeyboard::KeyCode::KEY_UP_ARROW:
+            case EventKeyboard::KeyCode::KEY_W:
+                dir = Direction::Up;
+                break;
+            case EventKeyboard::KeyCode::KEY_DOWN_ARROW:
+            case EventKeyboard::KeyCode::KEY_S:
+                dir = Direction::Down;
+                break;
+        }
+
+        SEND_EVENT("Swipe", &dir);     
+    };
+    
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+#endif
+
     //Event listener for player input
     auto eventListener = EventListenerTouchOneByOne::create();
 

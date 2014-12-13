@@ -122,4 +122,18 @@ void PogoPainterResults::setResults(const vector<int>& res)
     };
     
     this->_eventDispatcher->addEventListenerWithSceneGraphPriority(eventListener, this);
+
+
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 || CC_TARGET_PLATFORM == CC_PLATFORM_LINUX)
+    auto keyboardListener = EventListenerKeyboard::create();
+
+    keyboardListener->onKeyPressed = [](EventKeyboard::KeyCode keyCode, Event* event){
+        BonusManager::getInstance().clear();
+        Director::getInstance()->replaceScene(PogoPainter::createScene());
+    };
+
+    this->_eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardListener, this);
+#endif
+
 }
