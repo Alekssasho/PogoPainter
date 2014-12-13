@@ -35,7 +35,7 @@ using PlayerPtr = std::unique_ptr<Player>;
 class Bonus
 {
 public:
-    enum Type { Checkpoint, Arrow } type;
+    enum Type : unsigned char { Checkpoint, Arrow } type;
 
     Bonus(Cell& c, Type t)
         : cell(c), type(t)
