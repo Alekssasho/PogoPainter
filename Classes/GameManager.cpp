@@ -237,7 +237,8 @@ void ServerConnection::run()
 
     Poco::Timespan sendTimeout(0, chrono::duration_cast<chrono::microseconds>(server->getSendTime()).count());
     ss.setSendTimeout(sendTimeout);
-   
+    
+    chrono::milliseconds yeildTime(1);
  
     if (ss.sendBytes(myState, sizeof(*myState)) != sizeof(*myState)) {
         server->removeClient(ip);
@@ -264,6 +265,7 @@ void ServerConnection::run()
             if (ss.available() >= sizeof(*pPlayerDir)) {
                 gotResponse = 0 != ss.receiveBytes(pPlayerDir, sizeof(*pPlayerDir));
             }
+            this_thread::sleep_for(yeildTime);
         }
 
 //        if (!gotResponse) {
