@@ -20,6 +20,8 @@ private:
     
     bool mInit = false;
 public:
+    PogoPainter();
+    
     static Scene* createScene();
 
     bool init() override;

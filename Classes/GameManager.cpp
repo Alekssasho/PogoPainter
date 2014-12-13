@@ -16,6 +16,8 @@
 #include <chrono>
 #include <utility>
 
+#include <Poco/ByteOrder.h>
+
 #include "Macros.h"
 
 using namespace cocos2d;
@@ -284,7 +286,7 @@ void ServerConnection::run()
 }
 
 ClientConnection::ClientConnection(const std::string& ipaddrs, int time)
-: mSocket(), mTimer(time), ipAddress(ipaddrs), started(false)
+: mSocket(), mTimer(time), ipAddress(ipaddrs), started(false), mReceived(false)
 {
     this->registerPlayers();
 }
@@ -323,6 +325,8 @@ void ClientConnection::gameStarted()
             
             memcpy(reinterpret_cast<char*>(&mState.state) + received, data, got);
             received += got;
+            
+            mReceived = true;
         }
         
         received = 0;
@@ -342,6 +346,9 @@ void ClientConnection::registerPlayers()
 
 void ClientConnection::deserializeAndSendEvents()
 {
+    if(!mReceived)
+        return;
+    
     auto& state = mState.state;
     
     mState.setTicks(state.tick);

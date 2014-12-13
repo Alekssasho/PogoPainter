@@ -11,6 +11,8 @@ USING_NS_CC;
 
 #define SPRITE_CELL(pos) this->spriteCells[(pos).x + (pos).y * Board::boardSize]
 
+//#define SERVER
+
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 template<typename T>
 string to_string(const T& t) {
@@ -19,6 +21,11 @@ string to_string(const T& t) {
     return os.str();
 }
 #endif
+
+//Change address from here
+PogoPainter::PogoPainter()
+:manager("127.0.0.1")
+{}
 
 Scene* PogoPainter::createScene()
 {
@@ -304,7 +311,10 @@ bool PogoPainter::init()
 
 void PogoPainter::gameTick(float dt) {
     manager.deserializeAndSendEvents();
+    
+#ifdef SERVER
     GameServer::getServer()->update(dt);
+#endif
     
     
     int timer = manager.timer();
@@ -392,19 +402,26 @@ void PogoPainter::update(float dt)
     if (!mInit) {
         this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), GameManager::tickDelay);
         
-        new GameServer(90, 1);
+#ifdef SERVER
+        new GameServer(90, 2);
+#endif
         
         std::thread client(&ClientConnection::registerWithServer, &manager);
         client.detach();
         
         while(!manager.started)
             ;
-        
-        if(!GameServer::getServer()->startGame()) {
+
+#ifdef SERVER
+        while(!GameServer::getServer()->startGame())
+            ;
+            {
             Director::getInstance()->end();
             exit(1);
             return;
         }
+#endif
+        
         mInit = true;
     }
 }

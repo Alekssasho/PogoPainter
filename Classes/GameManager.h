@@ -51,6 +51,8 @@ public:
     void deserializeAndSendEvents();
     
     std::atomic<bool> started;
+    
+    bool mReceived;
 private:
     void registerPlayers();
     void gameStarted();

@@ -22,8 +22,8 @@ public:
     struct game_state {
         int tick;
         struct board_state {
-            bool has_bonus : 1;
-            Bonus::Type bonus_type : 7;
+            bool has_bonus;
+            Bonus::Type bonus_type;
             unsigned char bonus_data;
             Color color;
         } board[Board::boardSize * Board::boardSize];
