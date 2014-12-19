@@ -18,6 +18,8 @@
 #include <mutex>
 #include <atomic>
 
+#include "Socket.h"
+
 #include "Poco/Net/TCPServer.h"
 #include "Poco/Net/TCPServerConnection.h"
 #include "Poco/Net/TCPServerParams.h"
@@ -44,6 +46,7 @@ class ClientConnection
 {
 public:
     ClientConnection(const std::string& ipaddres = "127.0.0.1", int time = 90);
+    ~ClientConnection() { mSocket.Close(); };
     void sendPlayerState();
     GameState& state() { return mState; }
     int timer() const { return mTimer; }
@@ -57,7 +60,9 @@ private:
     void registerPlayers();
     void gameStarted();
     
-    Poco::Net::StreamSocket mSocket;
+//    Poco::Net::StreamSocket mSocket;
+    ClientSocket mSocket;
+    
     GameState mState;
     const int mTimer;
     

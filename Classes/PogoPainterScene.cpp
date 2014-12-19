@@ -11,7 +11,8 @@ USING_NS_CC;
 
 #define SPRITE_CELL(pos) this->spriteCells[(pos).x + (pos).y * Board::boardSize]
 
-//#define SERVER
+#define SERVER
+#define NUM_PEOPLE 1
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 template<typename T>
@@ -435,7 +436,7 @@ void PogoPainter::update(float dt)
         this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), GameManager::tickDelay);
         
 #ifdef SERVER
-        new GameServer(90, 2);
+        new GameServer(90, NUM_PEOPLE);
 #endif
         
         std::thread client(&ClientConnection::registerWithServer, &manager);
@@ -447,11 +448,11 @@ void PogoPainter::update(float dt)
 #ifdef SERVER
         while(!GameServer::getServer()->startGame())
             ;
-            {
-            Director::getInstance()->end();
-            exit(1);
-            return;
-        }
+//        {
+//            Director::getInstance()->end();
+//            exit(1);
+//            return;
+//        }
 #endif
         
         mInit = true;

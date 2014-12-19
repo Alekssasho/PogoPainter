@@ -23,6 +23,7 @@
 		2CB69F821A0D9ADC00E2B018 /* Cell in Resources */ = {isa = PBXBuildFile; fileRef = 2CB69F7E1A0D9ADC00E2B018 /* Cell */; };
 		2CB69F831A0D9ADC00E2B018 /* General in Resources */ = {isa = PBXBuildFile; fileRef = 2CB69F7F1A0D9ADC00E2B018 /* General */; };
 		2CB69F841A0D9ADC00E2B018 /* Player in Resources */ = {isa = PBXBuildFile; fileRef = 2CB69F801A0D9ADC00E2B018 /* Player */; };
+		2CDC4B7C1A446904005DF6FE /* Socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CDC4B7A1A446904005DF6FE /* Socket.cpp */; };
 		3EACC98F19EE6D4300EB3C5E /* res in Resources */ = {isa = PBXBuildFile; fileRef = 3EACC98E19EE6D4300EB3C5E /* res */; };
 		3EACC99019EE6D4300EB3C5E /* res in Resources */ = {isa = PBXBuildFile; fileRef = 3EACC98E19EE6D4300EB3C5E /* res */; };
 		46880B7B19C43A67006E1F66 /* CloseNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = 46880B7619C43A67006E1F66 /* CloseNormal.png */; };
@@ -140,6 +141,8 @@
 		2CB69F7E1A0D9ADC00E2B018 /* Cell */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Cell; sourceTree = "<group>"; };
 		2CB69F7F1A0D9ADC00E2B018 /* General */ = {isa = PBXFileReference; lastKnownFileType = folder; path = General; sourceTree = "<group>"; };
 		2CB69F801A0D9ADC00E2B018 /* Player */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Player; sourceTree = "<group>"; };
+		2CDC4B7A1A446904005DF6FE /* Socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Socket.cpp; sourceTree = "<group>"; };
+		2CDC4B7B1A446904005DF6FE /* Socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Socket.h; sourceTree = "<group>"; };
 		3EACC98E19EE6D4300EB3C5E /* res */ = {isa = PBXFileReference; lastKnownFileType = folder; path = res; sourceTree = "<group>"; };
 		46880B7619C43A67006E1F66 /* CloseNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloseNormal.png; sourceTree = "<group>"; };
 		46880B7719C43A67006E1F66 /* CloseSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloseSelected.png; sourceTree = "<group>"; };
@@ -339,6 +342,8 @@
 				2CB39E8A1A27C2FE00B93BAC /* SpecificPlayers.cpp */,
 				2CB39E8B1A27C2FE00B93BAC /* SpecificPlayers.h */,
 				2C8C436F1A275270008BDD4C /* GameState.h */,
+				2CDC4B7A1A446904005DF6FE /* Socket.cpp */,
+				2CDC4B7B1A446904005DF6FE /* Socket.h */,
 				46880B8519C43A87006E1F66 /* AppDelegate.h */,
 				F500FF0C1A0E2CE30051EF51 /* PogoPainterMenuScene.cpp */,
 				F500FF0D1A0E2CE30051EF51 /* PogoPainterMenuScene.h */,
@@ -559,6 +564,7 @@
 				46880B8819C43A87006E1F66 /* AppDelegate.cpp in Sources */,
 				46880B8A19C43A87006E1F66 /* PogoPainterScene.cpp in Sources */,
 				2C8C43731A275533008BDD4C /* GameManager.cpp in Sources */,
+				2CDC4B7C1A446904005DF6FE /* Socket.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				2C8C43701A275270008BDD4C /* GameState.cpp in Sources */,
 				2CB39E8C1A27C2FE00B93BAC /* SpecificPlayers.cpp in Sources */,

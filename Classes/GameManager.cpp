@@ -61,7 +61,7 @@ playerData({
     mState.serialize();
 
     GameServer::self = this;
-    ServerSocket sock(SocketAddress(IPAddress(), gPortNumber));
+    Poco::Net::ServerSocket sock(SocketAddress(IPAddress(), gPortNumber));
     server = new TCPServer(&*factory, sock);
     server->start();
 }
@@ -295,10 +295,10 @@ ClientConnection::ClientConnection(const std::string& ipaddrs, int time)
 
 void ClientConnection::registerWithServer()
 {
-    mSocket.connect(SocketAddress(ipAddress, gPortNumber));
-    while(mSocket.available() != sizeof(mPlayer))
+    mSocket.Connect(ipAddress, gPortNumber);
+    while(mSocket.Available() != sizeof(mPlayer))
         ;
-    mSocket.receiveBytes(&mPlayer, sizeof(mPlayer));
+    mSocket.ReceiveBytes(&mPlayer, sizeof(mPlayer));
     this->sendPlayerState();
     
     started = true;
@@ -318,12 +318,12 @@ void ClientConnection::gameStarted()
     const int size = sizeof(GameState::game_state);
     char data[size];
     int received = 0;
-    int got = 0;
+    long got = 0;
     //Server will tell us to stop the game  when it is finished
     while(true) {
 //        this->sendPlayerState();
         while(received != size) {
-            got = mSocket.receiveBytes(&data, size - received);
+            got = mSocket.ReceiveBytes(&data, size - received);
             
             memcpy(reinterpret_cast<char*>(&mState.state) + received, data, got);
             received += got;
@@ -401,5 +401,5 @@ void ClientConnection::deserializeAndSendEvents()
 
 void ClientConnection::sendPlayerState()
 {
-    mSocket.sendBytes(&mPlayer.dir, sizeof(mPlayer.dir));
+    mSocket.SendBytes(&mPlayer.dir, sizeof(mPlayer.dir));
 }

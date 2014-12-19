@@ -31,7 +31,8 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
 				   ../../Classes/Bonuses.cpp \
 				   ../../Classes/GameManager.cpp \
 				   ../../Classes/GameState.cpp \
-				   ../../Classes/SpecificPlayers.cpp
+				   ../../Classes/SpecificPlayers.cpp \
+				   ../../Classes/Socket.cpp
 
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
