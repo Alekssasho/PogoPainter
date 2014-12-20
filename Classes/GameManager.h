@@ -20,11 +20,6 @@
 
 #include "Socket.h"
 
-#include "Poco/Net/TCPServer.h"
-#include "Poco/Net/TCPServerConnection.h"
-#include "Poco/Net/TCPServerParams.h"
-#include "Poco/Net/ServerSocket.h"
-
 class GameManager {
 public:
     GameManager(int t = 90): mTimer(t) {};
@@ -60,7 +55,6 @@ private:
     void registerPlayers();
     void gameStarted();
     
-//    Poco::Net::StreamSocket mSocket;
     ClientSocket mSocket;
     
     GameState mState;
@@ -73,12 +67,14 @@ private:
 
 class GameServer;
 
-class ServerConnection: public Poco::Net::TCPServerConnection
+class ServerConnection
 {
+private:
     GameServer * server;
-
+    SocketStream sock;
+    
 public:
-    ServerConnection(const Poco::Net::StreamSocket& s);
+    ServerConnection(SocketStream s);
 
     void run();
 };
@@ -95,8 +91,7 @@ class GameServer
     const int mMaxClients;
     const int mRemoteClients;
     std::unordered_map<std::string, std::pair<int, Player*>> mClinets;
-    Poco::Net::TCPServer * server;
-    std::unique_ptr<Poco::Net::TCPServerConnectionFactoryImpl<ServerConnection>> factory;
+    ServerSocket server;
 
     const std::vector<std::pair<Color, PlayerData>> playerData;
     std::vector<bool> mAlive;

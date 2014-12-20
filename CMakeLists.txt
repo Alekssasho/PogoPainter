@@ -51,6 +51,7 @@ set(GAME_SRC
   Classes/PogoPainterResultScene.cpp
   Classes/PogoPainterScene.cpp
   Classes/SpecificPlayers.cpp
+  Classes/Socket.cpp
 )
 
 set(GAME_HEADERS
@@ -67,6 +68,7 @@ set(GAME_HEADERS
   Classes/PogoPainterResultScene.h
   Classes/PogoPainterScene.h
   Classes/SpecificPlayers.h
+  Classes/Socket.h
 )
 
 if( APPLE AND IOS )
@@ -297,7 +299,7 @@ else()
 add_executable(${APP_NAME} ${GAME_SRC})
 endif()
 
-target_link_libraries(${APP_NAME} cocos2d PocoFoundation PocoNet)
+target_link_libraries(${APP_NAME} cocos2d)
 
 link_directories()
 

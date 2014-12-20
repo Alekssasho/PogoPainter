@@ -16,8 +16,6 @@
 #include <chrono>
 #include <utility>
 
-#include <Poco/ByteOrder.h>
-
 #include "Macros.h"
 
 using namespace cocos2d;
@@ -29,13 +27,11 @@ const float GameManager::tickDelay = 0.5f;
 //Globals
 const int gPortNumber = 8126;
 
-
-using namespace Poco::Net;
 GameServer * GameServer::self = nullptr;
 
 
 GameServer::GameServer(int gameTime, int clients)
-: factory(new TCPServerConnectionFactoryImpl<ServerConnection>()), mMaxClients(4), mRemoteClients(clients), mAlive(mRemoteClients, false), mTimer(gameTime),
+: mMaxClients(4), mRemoteClients(clients), mAlive(mRemoteClients, false), mTimer(gameTime),
 playerData({
     make_pair(Color::Red, PlayerData{ Color::Red, Vec2(0, 0), Direction::Up }),
     make_pair(Color::Green, PlayerData{ Color::Green, Vec2(0, 7), Direction::Right }),
@@ -61,9 +57,12 @@ playerData({
     mState.serialize();
 
     GameServer::self = this;
-    Poco::Net::ServerSocket sock(SocketAddress(IPAddress(), gPortNumber));
-    server = new TCPServer(&*factory, sock);
-    server->start();
+    server.Listen(gPortNumber);
+    std::thread acceptThread([this] {
+        ServerConnection conn(this->server.Accept());
+        conn.run();
+    });
+    acceptThread.detach();
 }
 
 void GameServer::addAiPlayer(Color color)
@@ -78,8 +77,6 @@ void GameServer::addAiPlayer(Color color)
 
 GameServer::~GameServer()
 {
-    server->stop();
-    delete server;
 }
 
 void GameServer::waitToSend(function<bool()> until)
@@ -90,8 +87,9 @@ void GameServer::waitToSend(function<bool()> until)
 
 void GameServer::addClient(const std::string & ip)
 {
+    static int numConn = 0;
     if (mClinets.find(ip) == mClinets.end()) {
-        mClinets[ip] = make_pair(server->currentConnections() - 1, nullptr);
+        mClinets[ip] = make_pair(numConn++, nullptr);
     }
 }
 
@@ -216,16 +214,16 @@ void GameServer::ping(const std::string & ip)
     mAlive[mClinets[ip].first] = true;
 }
 
-ServerConnection::ServerConnection(const StreamSocket & s): Poco::Net::TCPServerConnection(s), server(GameServer::getServer())
+ServerConnection::ServerConnection(SocketStream s): sock(std::move(s)), server(GameServer::getServer())
 {}
 
 void ServerConnection::run()
 {
-    StreamSocket& ss = socket();
     if (server->status == GameServer::Status::Running) {
         return;
     }
-    const auto & ip = ss.address().host().toString();
+    //TODO: take address of client
+    std::string ip = "127.0.0.1";
     server->addClient(ip);
 
     // will unregister player on function exit
@@ -236,13 +234,10 @@ void ServerConnection::run()
     auto gameState = &server->getGameState();
     
     auto receiveDuration(server->getReceiveTime());
-
-    Poco::Timespan sendTimeout(0, chrono::duration_cast<chrono::microseconds>(server->getSendTime()).count());
-    ss.setSendTimeout(sendTimeout);
     
     chrono::milliseconds yeildTime(1);
  
-    if (ss.sendBytes(myState, sizeof(*myState)) != sizeof(*myState)) {
+    if (sock.SendBytes(myState, sizeof(*myState)) != sizeof(*myState)) {
         server->removeClient(ip);
     }
 
@@ -252,7 +247,7 @@ void ServerConnection::run()
     });
 
     // notifies all clients that game started
-    if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*gameState)) {
+    if (sock.SendBytes(gameState, sizeof(*gameState)) != sizeof(*gameState)) {
         return;
     }
     
@@ -264,8 +259,8 @@ void ServerConnection::run()
 
         auto stop = chrono::system_clock::now() + receiveDuration;
         while (stop > chrono::system_clock::now()) {
-            if (ss.available() >= sizeof(*pPlayerDir)) {
-                gotResponse = 0 != ss.receiveBytes(pPlayerDir, sizeof(*pPlayerDir));
+            if (sock.Available() >= sizeof(*pPlayerDir)) {
+                gotResponse = 0 != sock.ReceiveBytes(pPlayerDir, sizeof(*pPlayerDir));
             }
             this_thread::sleep_for(yeildTime);
         }
@@ -274,7 +269,7 @@ void ServerConnection::run()
 //            return;
 //        }
 
-        if (ss.sendBytes(gameState, sizeof(*gameState)) != sizeof(*gameState)) {
+        if (sock.SendBytes(gameState, sizeof(*gameState)) != sizeof(*gameState)) {
             return;
         }
 
@@ -316,22 +311,15 @@ void ClientConnection::gameStarted()
     });
 
     const int size = sizeof(GameState::game_state);
-    char data[size];
-    int received = 0;
-    long got = 0;
     //Server will tell us to stop the game  when it is finished
     while(true) {
 //        this->sendPlayerState();
-        while(received != size) {
-            got = mSocket.ReceiveBytes(&data, size - received);
-            
-            memcpy(reinterpret_cast<char*>(&mState.state) + received, data, got);
-            received += got;
-            
-            mReceived = true;
-        }
+        while(mSocket.Available() != size)
+            ;
         
-        received = 0;
+        if(mSocket.ReceiveBytes(&mState.state, size) != size)
+            return;
+        mReceived = true;
         
         if(mState.ticks() == mTimer)
             return;

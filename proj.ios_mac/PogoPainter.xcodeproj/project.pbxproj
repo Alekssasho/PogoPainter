@@ -12,8 +12,6 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765A40DF7441C002DB57D /* CoreGraphics.framework */; };
-		2C8C436C1A275173008BDD4C /* libPocoFoundationd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C8C436A1A275173008BDD4C /* libPocoFoundationd.a */; };
-		2C8C436D1A275173008BDD4C /* libPocoNetd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C8C436B1A275173008BDD4C /* libPocoNetd.a */; };
 		2C8C43701A275270008BDD4C /* GameState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C436E1A275270008BDD4C /* GameState.cpp */; };
 		2C8C43731A275533008BDD4C /* GameManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2C8C43711A275533008BDD4C /* GameManager.cpp */; };
 		2CB39E8C1A27C2FE00B93BAC /* SpecificPlayers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB39E8A1A27C2FE00B93BAC /* SpecificPlayers.cpp */; };
@@ -205,8 +203,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2C8C436C1A275173008BDD4C /* libPocoFoundationd.a in Frameworks */,
-				2C8C436D1A275173008BDD4C /* libPocoNetd.a in Frameworks */,
 				1AC6FB30180E99EB004C840B /* libcocos2d iOS.a in Frameworks */,
 				D6B0611B1803AB670077942B /* CoreMotion.framework in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
@@ -621,8 +617,6 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"/Users/aleksandar/Downloads/poco-1.4.7/Foundation/include",
-					"/Users/aleksandar/Downloads/poco-1.4.7/Net/include",
 					"$(inherited)",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios/Simulation",
@@ -653,8 +647,6 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				HEADER_SEARCH_PATHS = (
-					"/Users/aleksandar/Downloads/poco-1.4.7/Foundation/include",
-					"/Users/aleksandar/Downloads/poco-1.4.7/Net/include",
 					"$(inherited)",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios",
 					"$(SRCROOT)/../cocos2d/cocos/platform/ios/Simulation",

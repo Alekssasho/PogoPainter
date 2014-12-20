@@ -1,18 +1,6 @@
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE    := poco_foundation
-LOCAL_SRC_FILES := ../../libs/Android/libPocoFoundationd.a
-
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE    := poco_net
-LOCAL_SRC_FILES := ../../libs/Android/libPocoNetd.a
-
-include $(PREBUILT_STATIC_LIBRARY)
-
-include $(CLEAR_VARS)
 
 $(call import-add-path,$(LOCAL_PATH)/../../cocos2d)
 $(call import-add-path,$(LOCAL_PATH)/../../cocos2d/external)
@@ -37,7 +25,7 @@ LOCAL_SRC_FILES := hellocpp/main.cpp \
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../Classes
 
-LOCAL_STATIC_LIBRARIES := cocos2dx_static poco_net poco_foundation
+LOCAL_STATIC_LIBRARIES := cocos2dx_static 
 
 include $(BUILD_SHARED_LIBRARY)
 
