@@ -36,12 +36,15 @@ protected:
 class ClientSocket : public SocketStream
 {
 public:
+    ClientSocket();
+    ~ClientSocket();
     bool Connect(const std::string& ipaddress, int port);
 };
 
 class ServerSocket
 {
 public:
+    ServerSocket();
     ~ServerSocket();
     bool Listen(int port);
     SocketStream Accept();

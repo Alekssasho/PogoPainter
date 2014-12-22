@@ -16,6 +16,13 @@
 #include <sys/ioctl.h>
 #include <string.h>
 
+#include <cocos/cocos2d.h>
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    #define SOCKET_WIN
+#include <winsock2.h>
+#endif
+
 void SocketStream::Close()
 {
     if(mSocket != -1) {
@@ -55,7 +62,12 @@ long SocketStream::ReceiveBytes(void* byteArray, size_t count)
 int SocketStream::Available()
 {
     int result;
+#ifdef SOCKET_WIN
+    if(ioctlsocket(mSocket, FIONREAD, &result) < 0) {
+#else
     if(ioctl(mSocket, FIONREAD, &result) < 0) {
+#endif
+
         return -1;
     }
     return result;
@@ -79,6 +91,30 @@ bool ClientSocket::Connect(const std::string& ipaddress, int port)
     }
     
     return true;
+}
+
+ClientSocket::ClientSocket()
+{
+#ifdef SOCKET_WIN
+    WSADATA wsaData;
+    n = WSAStartup(MAKEWORD(2, 2),&wsaData);
+#endif
+}
+
+ClientSocket::~ClientSocket()
+{
+#ifdef SOCKET_WIN
+    closesocket(MSocket);
+    WSACleanup();
+#endif
+}
+
+ServerSocket::ServerSocket()
+{
+#ifdef SOCKET_WIN
+    WSADATA wsaData;
+    n = WSAStartup(MAKEWORD(2, 2),&wsaData);
+#endif
 }
 
 bool ServerSocket::Listen(int port)
@@ -124,5 +160,11 @@ SocketStream ServerSocket::Accept()
 
 ServerSocket::~ServerSocket()
 {
+#ifdef SOCKET_WIN
+    closesocket(MSocket);
+    WSACleanup();
+#else
     close(mSocket);
+#endif
+    
 }
