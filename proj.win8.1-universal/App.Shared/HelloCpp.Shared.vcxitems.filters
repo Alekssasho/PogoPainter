@@ -35,6 +35,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Classes\SpecificPlayers.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Classes\Socket.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="$(MSBuildThisFileDirectory)App.xaml" />
@@ -84,6 +87,9 @@
       <Filter>Classes</Filter>
     </ClInclude>
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Classes\SpecificPlayers.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Classes\Socket.h">
       <Filter>Classes</Filter>
     </ClInclude>
   </ItemGroup>

@@ -24,6 +24,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Classes\PogoPainterMenuScene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Classes\PogoPainterResultScene.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Classes\PogoPainterScene.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Classes\Socket.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)..\..\Classes\SpecificPlayers.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)App.xaml.cpp">
       <DependentUpon>$(MSBuildThisFileDirectory)App.xaml</DependentUpon>
@@ -45,6 +46,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Classes\PogoPainterMenuScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Classes\PogoPainterResultScene.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Classes\PogoPainterScene.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Classes\Socket.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)..\..\Classes\SpecificPlayers.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)App.xaml.h">
       <DependentUpon>$(MSBuildThisFileDirectory)App.xaml</DependentUpon>

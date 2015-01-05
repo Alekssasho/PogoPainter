@@ -25,7 +25,7 @@ public:
     long ReceiveBytes(void* byteArray, size_t count);
     
     //Check how many bytes are available to read
-    int Available();
+    unsigned long Available();
     
 protected:
     friend class ServerSocket;
