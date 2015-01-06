@@ -9,7 +9,7 @@
 #include "Socket.h"
 #include <string.h>
 
-#include <cocos/cocos2d.h>
+#include "cocos2d.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     #define SOCKET_WIN
