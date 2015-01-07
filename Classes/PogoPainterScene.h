@@ -18,7 +18,7 @@ private:
     std::vector<Sprite*> spritePlayers;
     ClientConnection manager;
     
-    bool mInit = false;
+    void handleLine();
 public:
     PogoPainter();
     

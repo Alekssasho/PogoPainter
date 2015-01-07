@@ -21,11 +21,13 @@ public:
     
     void Close();
     
-    long SendBytes(void* byteArray, size_t count);
+    long SendBytes(const void* byteArray, size_t count);
     long ReceiveBytes(void* byteArray, size_t count);
     
     //Check how many bytes are available to read
     unsigned long Available();
+    
+    std::string GetPeerName();
     
 protected:
     friend class ServerSocket;

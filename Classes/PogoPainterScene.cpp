@@ -215,7 +215,7 @@ bool PogoPainter::init()
 
     ADD_DELEGATE("RotateArrow", [this](EventCustom* e) {
         auto pBonus = static_cast<Bonus*>(e->getUserData());
-        this->getChildByTag(pBonus->cell.x + pBonus->cell.y * Board::boardSize)->runAction(RotateBy::create(GameManager::tickDelay / 2, 90));
+        this->getChildByTag(pBonus->cell.x + pBonus->cell.y * Board::boardSize)->runAction(RotateBy::create(GameServer::tickDelay / 2, 90));
     });
     
     ADD_DELEGATE("TriggerArrow", [this](EventCustom* e) {
@@ -342,120 +342,112 @@ bool PogoPainter::init()
     return true;
 }
 
-void PogoPainter::gameTick(float dt) {
-    manager.deserializeAndSendEvents();
-    
+void PogoPainter::update(float dt)
+{
+    static std::once_flag flag;
+    std::call_once(flag, [this]{
+        
 #ifdef SERVER
-    GameServer::getServer()->update(dt);
+        std::thread serverThread([]{
+            new GameServer(90, NUM_PEOPLE);
+            GameServer::getServer()->startGame();
+        });
+        serverThread.detach();
+        
+        //TODO: Ugly hack - because server is not yet listening when client tries to connect
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
 #endif
+        
+        manager.registerWithServer();
+        
+        while(!manager.started)
+            ;
+    });
     
-    
-    int timer = manager.timer();
-    int ticks = manager.state().ticks();
-    static_cast<Label*>(this->getChildByTag(4200))->setString("Timer: " + to_string((timer - ticks) / 2));
-    if (ticks % 2 == 0){
-        if ((timer - ticks) / 2 <= 10 )
-            CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sounds/beep-08.wav");
-    }
-
-    if (timer == ticks) {
-        this->unscheduleAllCallbacks();
-        this->unscheduleUpdate();
-
-        vector<int> scores;
-        for (auto& pl : manager.state().players()) {
-            scores.push_back(pl->points);
+    if(manager.checkForSignal()) {
+        manager.deserializeAndSendEvents();
+        
+        int timer = manager.timer();
+        int ticks = manager.state().ticks();
+        static_cast<Label*>(this->getChildByTag(4200))->setString("Timer: " + to_string((timer - ticks) / 2));
+        if (ticks % 2 == 0){
+            if ((timer - ticks) / 2 <= 10 )
+                CocosDenshion::SimpleAudioEngine::getInstance()->playEffect("Sounds/beep-08.wav");
         }
-
-        auto director = Director::getInstance();
-        auto newScene = PogoPainterResults::createScene();
-
-        static_cast<PogoPainterResults*>(newScene->getChildByTag(2))->setResults(scores);
-        director->pushScene(newScene);
-        return;
+        
+        if (timer == ticks) {
+            this->unscheduleAllCallbacks();
+            this->unscheduleUpdate();
+            
+            vector<int> scores;
+            for (auto& pl : manager.state().players()) {
+                scores.push_back(pl->points);
+            }
+            
+            auto director = Director::getInstance();
+            auto newScene = PogoPainterResults::createScene();
+            
+            static_cast<PogoPainterResults*>(newScene->getChildByTag(2))->setResults(scores);
+            director->pushScene(newScene);
+            return;
+        }
+        
+        auto& players = manager.state().players();
+        
+        //Init animation for players
+        for (auto& pl : players) {
+            auto action = MoveTo::create(GameServer::tickDelay, SPRITE_CELL(pl->pos)->getPosition());
+            this->spritePlayers[static_cast<int>(pl->color)]->runAction(action);
+            
+            auto secondAction = Sequence::createWithTwoActions(DelayTime::create(GameServer::tickDelay / 2), CallFunc::create([this, &pl] {
+                SPRITE_CELL(pl->pos)->setTexture(this->textures[pl->color]);
+            }));
+            
+            SPRITE_CELL(pl->pos)->runAction(secondAction);
+        }
+        
+        this->handleLine();
     }
+}
 
+void PogoPainter::handleLine()
+{
     auto& players = manager.state().players();
-
-    //Init animation for players
-    for (auto& pl : players) {
-        auto action = MoveTo::create(GameManager::tickDelay, SPRITE_CELL(pl->pos)->getPosition());
-        this->spritePlayers[static_cast<int>(pl->color)]->runAction(action);
-
-        auto secondAction = Sequence::createWithTwoActions(DelayTime::create(GameManager::tickDelay / 2), CallFunc::create([this, &pl] {
-            SPRITE_CELL(pl->pos)->setTexture(this->textures[pl->color]);
-        }));
-
-        SPRITE_CELL(pl->pos)->runAction(secondAction);
-    }
-
-
-    //Handle line above
     
     if (players.size() == 0) {
         return;
     }
-
+    
     int maxPoints = std::accumulate(players.begin(), players.end(), 0, [](const int acc, const PlayerPtr& pPl) {
         return acc + pPl->points;
     });
-
+    
     //Ugly hack ask Aleksandar for explanation
     maxPoints += 40;
-
+    
     Color maxPointColor = std::max_element(players.begin(), players.end(), [](const PlayerPtr& lhs, const PlayerPtr& rhs) {
         return lhs->points < rhs->points;
     })->get()->color;
-
+    
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto coef = visibleSize.width / maxPoints;
-
+    
     float sizeTillNow = 0;
     for (auto& pl : players) {
         //+ 10 because of ugly hack look up :D
         float size = (pl->points + 10) * coef;
-
+        
         auto pSprite = static_cast<Sprite*>(this->getChildByTag(100 + static_cast<int>(pl->color) * 100));
         pSprite->setPosition(Vec2(sizeTillNow + size / 2.0, visibleSize.height - 30));
         pSprite->setScaleX(size / pSprite->getContentSize().width);
-
+        
         if (maxPointColor != pl->color) {
             pSprite->setOpacity(111);
         } else {
             pSprite->setOpacity(255);
         }
-
+        
         sizeTillNow += pSprite->getBoundingBox().size.width;
-    }
-}
-
-
-void PogoPainter::update(float dt)
-{
-    if (!mInit) {
-        this->schedule(CC_SCHEDULE_SELECTOR(PogoPainter::gameTick), GameManager::tickDelay);
-        
-#ifdef SERVER
-        new GameServer(90, NUM_PEOPLE);
-#endif
-        
-        std::thread client(&ClientConnection::registerWithServer, &manager);
-        client.detach();
-        
-        while(!manager.started)
-            ;
-
-#ifdef SERVER
-        while(!GameServer::getServer()->startGame())
-            ;
-//        {
-//            Director::getInstance()->end();
-//            exit(1);
-//            return;
-//        }
-#endif
-        
-        mInit = true;
     }
 }
 

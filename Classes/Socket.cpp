@@ -47,12 +47,12 @@ SocketStream::~SocketStream()
     this->Close();
 }
 
-long SocketStream::SendBytes(void* byteArray, size_t count)
+long SocketStream::SendBytes(const void* byteArray, size_t count)
 {
     //TODO: check with select for availability to send and some error detection would be good
     if(mSocket == -1)
         return -1;
-    return send(mSocket, reinterpret_cast<char*>(byteArray), count, 0);
+    return send(mSocket, reinterpret_cast<const char*>(byteArray), count, 0);
 
 }
 
@@ -65,16 +65,28 @@ long SocketStream::ReceiveBytes(void* byteArray, size_t count)
 
 unsigned long SocketStream::Available()
 {
-    unsigned long result;
+    unsigned long result = 0;
 #ifdef SOCKET_WIN
     if(ioctlsocket(mSocket, FIONREAD, &result) < 0) {
 #else
     if(ioctl(mSocket, FIONREAD, &result) < 0) {
 #endif
 
-        return -1;
+        return 0;
     }
     return result;
+}
+    
+std::string SocketStream::GetPeerName()
+{
+    if(mSocket == -1)
+        return "";
+    
+    struct sockaddr_in clientSocket;
+    socklen_t size = sizeof(struct sockaddr_in);
+    getpeername(mSocket,(struct sockaddr*) &clientSocket, &size);
+    
+    return std::string(inet_ntoa(clientSocket.sin_addr));
 }
 
 bool ClientSocket::Connect(const std::string& ipaddress, int port)

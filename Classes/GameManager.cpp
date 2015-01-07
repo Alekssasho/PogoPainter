@@ -22,16 +22,17 @@ using namespace cocos2d;
 using namespace std;
 
 const float GameServer::tickDelay = 0.5f;
-const float GameManager::tickDelay = 0.5f;
 
 //Globals
-const int gPortNumber = 8126;
+static const int gPortNumber = 8126;
+
+static const char GAME_START_SIGNAL = 0;
+static const char SEND_DIR_SIGNAL = 1;
 
 GameServer * GameServer::self = nullptr;
 
-
 GameServer::GameServer(int gameTime, int clients)
-: mMaxClients(4), mRemoteClients(clients), mAlive(mRemoteClients, false), mTimer(gameTime),
+: mMaxClients(4), mRemoteClients(clients), mTimer(gameTime),
 playerData({
     make_pair(Color::Red, PlayerData{ Color::Red, Vec2(0, 0), Direction::Up }),
     make_pair(Color::Green, PlayerData{ Color::Green, Vec2(0, 7), Direction::Right }),
@@ -58,11 +59,62 @@ playerData({
 
     GameServer::self = this;
     server.Listen(gPortNumber);
-    std::thread acceptThread([this] {
-        ServerConnection conn(this->server.Accept());
-        conn.run();
-    });
-    acceptThread.detach();
+    
+    mClientSockets.reserve(clients);
+    for(int i = 0; i < clients; ++i) {
+        SocketStream sock(server.Accept());
+        string ip = sock.GetPeerName();
+        mClientSockets.emplace_back(move(sock), move(ip));
+    }
+    
+    for (auto& sock : mClientSockets){
+        this->addClient(sock.second);
+        
+        auto myState = &this->getPlayerState(sock.second);
+        if(sock.first.SendBytes(myState, sizeof(*myState)) != sizeof(*myState)) {
+            this->removeClient(sock.second);
+            sock.first.Close();
+        }
+    }
+}
+
+void GameServer::startGame()
+{
+    while (mClinets.size() != mRemoteClients)
+        ;
+    
+    status = Status::Running;
+    
+    auto gameState = &this->getGameState();
+    const size_t gameStateSize = sizeof(*gameState);
+    
+    //tell client game have started
+    for(auto& sock : mClientSockets) {
+        sock.first.SendBytes(&GAME_START_SIGNAL, sizeof(char));
+        sock.first.SendBytes(gameState, gameStateSize);
+    }
+    
+    while (this->status == GameServer::Status::Running) {
+        
+        auto time = chrono::system_clock::now();
+        
+        this->update();
+        
+        for(auto& sock : mClientSockets) {
+            sock.first.SendBytes(&SEND_DIR_SIGNAL, sizeof(char));
+            
+            auto pPlayerDir = &this->getPlayerState(sock.second).dir;
+            
+            while (sock.first.Available() != sizeof(*pPlayerDir))
+                ;
+            sock.first.ReceiveBytes(pPlayerDir, sizeof(*pPlayerDir));
+            
+            sock.first.SendBytes(gameState, gameStateSize);
+        }
+        
+        std::this_thread::sleep_for(chrono::milliseconds(500) - (chrono::system_clock::now() - time));
+    }
+    
 }
 
 void GameServer::addAiPlayer(Color color)
@@ -73,16 +125,6 @@ void GameServer::addAiPlayer(Color color)
     pAi->currentDirection = pData.dir;
     pAi->pos = pData.pos;
     mState.players().push_back(PlayerPtr(pAi));
-}
-
-GameServer::~GameServer()
-{
-}
-
-void GameServer::waitToSend(function<bool()> until)
-{
-    unique_lock<mutex> unqLock(mSendMutex);
-    mCanSendState.wait(unqLock, until);
 }
 
 void GameServer::addClient(const std::string & ip)
@@ -125,33 +167,13 @@ GameState::game_state & GameServer::getGameState()
     return mState.state;
 }
 
-bool GameServer::startGame()
-{
-    if (mClinets.size() != mRemoteClients) {
-        return false;
-    }
-    fill(mAlive.begin(), mAlive.end(), false);
-    status = Status::Running;
-    mCanSendState.notify_all();
-    
-    return true;
-}
-
 void GameServer::stopGame()
 {
     status = Status::Stopped;
 }
 
-void GameServer::update(float deltaTime)
+void GameServer::update()
 {
-    lock_guard<mutex> lock(mPingLock);
-
-    if (any_of(mAlive.begin(), mAlive.end(), [](const bool & alive) { return !alive; })) {
-        // handle someone not responding
-        this->stopGame();
-    }
-    fill(mAlive.begin(), mAlive.end(), false);
-
     mState.client_deserialize();
     
     mState.incrementTick();
@@ -190,8 +212,6 @@ void GameServer::update(float deltaTime)
         auto res = board.moveInDir(pl->pos, dir);
         if (pl->pos != res) {
             pl->pos = res;
-        } else {
-            //TODO: feedback on wall hit
         }
     }
 
@@ -203,127 +223,52 @@ void GameServer::update(float deltaTime)
     
     
     mState.serialize();
-
-    // time to send clients the state
-    mCanSendState.notify_all();
-}
-
-void GameServer::ping(const std::string & ip)
-{
-    lock_guard<mutex> lock(mPingLock);
-    mAlive[mClinets[ip].first] = true;
-}
-
-ServerConnection::ServerConnection(SocketStream s): sock(std::move(s)), server(GameServer::getServer())
-{}
-
-void ServerConnection::run()
-{
-    if (server->status == GameServer::Status::Running) {
-        return;
-    }
-    //TODO: take address of client
-    std::string ip = "127.0.0.1";
-    server->addClient(ip);
-
-    // will unregister player on function exit
-    auto deleter = [&ip](GameServer * s) { s->removeClient(ip); };
-    unique_ptr<GameServer, decltype(deleter)> unregister(server, deleter);
-
-    auto myState = &server->getPlayerState(ip);
-    auto gameState = &server->getGameState();
-    
-    auto receiveDuration(server->getReceiveTime());
-    
-    chrono::milliseconds yeildTime(1);
- 
-    if (sock.SendBytes(myState, sizeof(*myState)) != sizeof(*myState)) {
-        server->removeClient(ip);
-    }
-
-    // wait for the game to start
-    server->waitToSend([this] () {
-        return this->server->status == GameServer::Status::Running;
-    });
-
-    // notifies all clients that game started
-    if (sock.SendBytes(gameState, sizeof(*gameState)) != sizeof(*gameState)) {
-        return;
-    }
-    
-    auto pPlayerDir = &myState->dir;
-        
-    while (server->status == GameServer::Status::Running) {
-        auto gotResponse = false;
-        auto thisTick = server->getThisTick();
-
-        auto stop = chrono::system_clock::now() + receiveDuration;
-        while (stop > chrono::system_clock::now()) {
-            if (sock.Available() >= sizeof(*pPlayerDir)) {
-                gotResponse = 0 != sock.ReceiveBytes(pPlayerDir, sizeof(*pPlayerDir));
-            }
-            this_thread::sleep_for(yeildTime);
-        }
-
-//        if (!gotResponse) {
-//            return;
-//        }
-
-        if (sock.SendBytes(gameState, sizeof(*gameState)) != sizeof(*gameState)) {
-            return;
-        }
-
-        server->ping(ip);
-
-        // wait for next tick
-        server->waitToSend([this, &thisTick] () {
-            return this->server->getThisTick() == thisTick + 1;
-        });
-    }
 }
 
 ClientConnection::ClientConnection(const std::string& ipaddrs, int time)
-: mSocket(), mTimer(time), ipAddress(ipaddrs), started(false), mReceived(false)
+: mSocket(), mTimer(time), ipAddress(ipaddrs), started(false)
 {
     this->registerPlayers();
 }
 
 void ClientConnection::registerWithServer()
 {
-    mSocket.Connect(ipAddress, gPortNumber);
+    if(!mSocket.Connect(ipAddress, gPortNumber)) {
+        log("coundnt connect to server");
+        exit(1);
+    }
     while(mSocket.Available() != sizeof(mPlayer))
         ;
     mSocket.ReceiveBytes(&mPlayer, sizeof(mPlayer));
-    this->sendPlayerState();
     
     started = true;
-    this->gameStarted();
-}
-
-void ClientConnection::gameStarted()
-{
-    //Register listening for swipes
+    
     ADD_DELEGATE("Swipe", [this](EventCustom* e) {
         auto pDir = static_cast<Direction*>(e->getUserData());
         
         mPlayer.dir = *pDir;
-        this->sendPlayerState();
     });
+}
 
-    const int size = sizeof(GameState::game_state);
-    //Server will tell us to stop the game  when it is finished
-    while(true) {
-//        this->sendPlayerState();
-        while(mSocket.Available() != size)
-            ;
-        
-        if(mSocket.ReceiveBytes(&mState.state, size) != size)
-            return;
-        mReceived = true;
-        
-        if(mState.ticks() == mTimer)
-            return;
-    }
+bool ClientConnection::checkForSignal()
+{
+    static const int size = sizeof(GameState::game_state);
+    static const size_t signalSize = sizeof(char);
+    
+    if(mSocket.Available() < signalSize)
+        return false;
+    
+    char signal;
+    mSocket.ReceiveBytes(&signal, signalSize);
+    if (signal == SEND_DIR_SIGNAL)
+        this->sendPlayerState();
+    
+    while(mSocket.Available() < size)
+        ;
+    
+    mSocket.ReceiveBytes(&mState.state, size);
+    
+    return true;
 }
 
 void ClientConnection::registerPlayers()
@@ -336,9 +281,6 @@ void ClientConnection::registerPlayers()
 
 void ClientConnection::deserializeAndSendEvents()
 {
-    if(!mReceived)
-        return;
-    
     auto& state = mState.state;
     
     mState.setTicks(state.tick);
