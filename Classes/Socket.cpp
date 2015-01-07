@@ -14,6 +14,7 @@
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) || (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
     #define SOCKET_WIN
 #include <winsock2.h>
+#include <WS2tcpip.h>
 #else
 #include <sys/socket.h>
 #include <sys/types.h>
